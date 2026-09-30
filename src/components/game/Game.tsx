@@ -259,14 +259,6 @@ function LocationView({
 }) {
   const [found, setFound] = useState<string | null>(null);
 
-  const revisitHere = CLUES.find(
-    (c) =>
-      c.revisit &&
-      c.source === location.spots.find((s) => s.gives === c.id)?.gives &&
-      false,
-  );
-  void revisitHere;
-
   const pendingRevisit = CLUES.filter(
     (c) =>
       c.revisit &&
