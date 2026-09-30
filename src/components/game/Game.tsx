@@ -519,7 +519,7 @@ function Conclusion({ game }: { game: GameApi }) {
 
 function Verdict({ game }: { game: GameApi }) {
   const accused = game.state.accused!;
-  const verdict = VERDICTS[accused];
+  const verdict = VERDICTS[accused] ?? VERDICTS["daniel"]!;
   const correct = accused === "daniel";
   const complete = KEY_EVIDENCE.every((id) => game.has(id));
 
