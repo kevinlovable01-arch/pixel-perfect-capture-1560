@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system — "O Último Temporal"
+ * Design system — "VEILORIS"
  * Noite de tempestade: azuis profundos do mar, luz de lampião (dourado),
  * papel envelhecido para textos de dossiê. Todas as cores em oklch.
  */
@@ -116,4 +116,19 @@
   background-color: color-mix(in oklab, var(--paper) 92%, transparent);
   color: oklch(0.24 0.03 60);
   border-radius: var(--radius-sm);
+}
+
+@utility title-vignette {
+  background: linear-gradient(
+    180deg,
+    transparent 62%,
+    color-mix(in oklab, var(--background) 72%, transparent) 100%
+  );
+}
+
+@utility character-screen {
+  background-image:
+    linear-gradient(90deg, color-mix(in oklab, var(--primary) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in oklab, var(--primary) 5%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
 }

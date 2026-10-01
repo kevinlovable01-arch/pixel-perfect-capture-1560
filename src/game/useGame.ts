@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
-export type Screen = "title" | "briefing" | "hub" | "verdict";
+export type Screen = "title" | "character" | "briefing" | "hub" | "verdict";
+
+export type PlayerCharacter = {
+  name: string;
+  pronouns: "ela/dela" | "ele/dele" | "elu/delu";
+  specialty: "Observação" | "Dedução" | "Persuasão";
+};
 
 export type GameState = {
   started: boolean;
@@ -8,6 +14,7 @@ export type GameState = {
   clues: string[];
   asked: string[];
   accused: string | null;
+  character: PlayerCharacter | null;
 };
 
 const STORAGE_KEY = "ultimo-temporal-save-v1";
@@ -18,7 +25,19 @@ const initialState: GameState = {
   clues: [],
   asked: [],
   accused: null,
+  character: null,
 };
+
+function restoreState(raw: string): GameState {
+  const saved = JSON.parse(raw) as Partial<GameState>;
+  return {
+    ...initialState,
+    ...saved,
+    clues: Array.isArray(saved.clues) ? saved.clues : [],
+    asked: Array.isArray(saved.asked) ? saved.asked : [],
+    character: saved.character ?? null,
+  };
+}
 
 export function useGame() {
   const [state, setState] = useState<GameState>(initialState);
@@ -29,7 +48,7 @@ export function useGame() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as GameState;
+        const parsed = restoreState(raw);
         setHasSave(parsed.started === true);
       }
     } catch {
@@ -50,7 +69,7 @@ export function useGame() {
   const resume = useCallback(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setState(JSON.parse(raw) as GameState);
+      if (raw) setState(restoreState(raw));
     } catch {
       /* ignora */
     }
@@ -88,11 +107,29 @@ export function useGame() {
     setState((s) => ({ ...s, accused: id, screen: "verdict" }));
   }, []);
 
+  function setCharacter(character: PlayerCharacter) {
+    setState((s) => ({ ...s, started: true, character, screen: "briefing" }));
+    setHasSave(true);
+  }
+
   const has = useCallback((id: string) => state.clues.includes(id), [state.clues]);
   const hasAll = useCallback(
     (ids?: string[]) => !ids || ids.every((i) => state.clues.includes(i)),
     [state.clues],
   );
 
-  return { state, loaded, hasSave, resume, reset, go, addClue, markAsked, accuse, has, hasAll };
+  return {
+    state,
+    loaded,
+    hasSave,
+    resume,
+    reset,
+    go,
+    addClue,
+    markAsked,
+    accuse,
+    setCharacter,
+    has,
+    hasAll,
+  };
 }
