@@ -338,7 +338,7 @@ function Hub({ game }: { game: GameApi }) {
                   <h2 className="text-lg">{l.name}</h2>
                   <p className="mt-1 text-xs uppercase tracking-wider text-primary">{l.subtitle}</p>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {l.spots.filter((s) => game.has(s.gives)).length}/{l.spots.length} pistas
+                    {l.spots.filter((s) => s.gives && game.has(s.gives)).length}/{l.spots.filter((s) => s.gives).length} pistas
                   </p>
                 </button>
               ))}
@@ -403,12 +403,13 @@ function LocationView({
         <div className="mt-3 grid gap-2">
           {location.spots.map((spot) => {
             const locked = !game.hasAll(spot.requires);
-            const done = game.has(spot.gives);
+            const done = !!spot.gives && game.has(spot.gives);
             return (
               <button
                 key={spot.id}
                 disabled={locked}
                 onClick={() => {
+                  if (!spot.gives) return;
                   game.addClue(spot.gives);
                   setFound(spot.gives);
                 }}
@@ -421,7 +422,7 @@ function LocationView({
                 <span>
                   {spot.label}
                   <span className="block text-xs text-muted-foreground">
-                    {locked ? "Você ainda não sabe o que procurar aqui." : spot.hint}
+                    {locked ? "Você ainda não sabe o que procurar aqui." : (spot.flavor ?? "Examinar")}
                   </span>
                 </span>
                 {done && <span className="text-xs text-primary">examinado</span>}
