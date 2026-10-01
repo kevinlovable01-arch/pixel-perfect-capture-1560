@@ -77,17 +77,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "O Último Temporal — jogo de investigação" },
+      { title: "VEILORIS — O mistério além do tempo" },
       {
         name: "description",
         content:
-          "Jogo de investigação narrativa: descubra quem matou o capitão durante a tempestade.",
+          "VEILORIS é uma aventura narrativa de investigação, mistérios e escolhas além do tempo.",
       },
       { name: "author", content: "Adrian Vale & Samuel Crowe" },
-      { property: "og:title", content: "O Último Temporal" },
+      { property: "og:title", content: "VEILORIS" },
       {
         property: "og:description",
-        content: "Caso 01: um capitão morto, vinte pessoas a bordo e um infiltrado.",
+        content: "Crie seu investigador e descubra mistérios espalhados além do tempo.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -103,7 +103,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Karla:wght@400;500;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
 
@@ -115,7 +115,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>

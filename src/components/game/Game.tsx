@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import {
   CASE,
   CLUES,
@@ -11,9 +11,10 @@ import {
   type Location,
   type Suspect,
 } from "@/game/case01";
-import { useGame } from "@/game/useGame";
+import { useGame, type PlayerCharacter } from "@/game/useGame";
 import { Button } from "@/components/ui/button";
-import shipImage from "@/assets/storm-ship.jpg";
+import { Input } from "@/components/ui/input";
+import coverAsset from "@/assets/veiloris-cover.png.asset.json";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
@@ -29,15 +30,19 @@ export function Game() {
         hasSave={game.hasSave}
         onNew={() => {
           game.reset();
-          game.go("briefing");
+          game.go("character");
         }}
         onResume={() => game.resume()}
       />
     );
   }
 
+  if (state.screen === "character") {
+    return <CharacterCreation onComplete={game.setCharacter} onBack={() => game.go("title")} />;
+  }
+
   if (state.screen === "briefing") {
-    return <Briefing onStart={() => game.go("hub")} />;
+    return <Briefing character={state.character} onStart={() => game.go("hub")} />;
   }
 
   if (state.screen === "verdict") {
@@ -59,46 +64,158 @@ function TitleScreen({
   onResume: () => void;
 }) {
   return (
-    <main className="relative min-h-screen overflow-hidden">
-      <img
-        src={shipImage}
-        alt="Navio pirata em uma tempestade noturna"
-        width={1536}
-        height={1024}
-        className="absolute inset-0 h-full w-full object-cover opacity-60"
-      />
-      <div className="absolute inset-0 bg-background/70" />
-      <div className="relative mx-auto flex min-h-screen max-w-2xl flex-col justify-end px-6 pb-16 pt-24">
-        <p className="text-sm uppercase tracking-[0.35em] text-primary">{CASE.code}</p>
-        <h1 className="mt-3 text-5xl leading-none text-foreground sm:text-7xl">{CASE.title}</h1>
-        <p className="mt-6 max-w-md text-base italic text-muted-foreground">
-          "A verdade não está escondida. Ela está espalhada."
-        </p>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+    <main className="min-h-screen bg-background">
+      <div className="mx-auto grid min-h-screen max-w-6xl lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="relative min-h-[68vh] overflow-hidden lg:min-h-screen">
+          <img
+            src={coverAsset.url}
+            alt="VEILORIS — O mistério além do tempo"
+            width={768}
+            height={768}
+            className="absolute inset-0 h-full w-full object-cover object-top"
+          />
+          <div className="title-vignette absolute inset-0" />
+        </div>
+        <div className="relative flex flex-col justify-center border-t border-primary/30 px-6 py-10 lg:border-l lg:border-t-0 lg:px-9">
+          <p className="text-xs uppercase tracking-[0.3em] text-primary">Uma jornada começa</p>
+          <h1 className="mt-2 text-4xl text-foreground">VEILORIS</h1>
+          <p className="mt-3 text-sm italic leading-relaxed text-muted-foreground">
+            Atravesse o véu. Observe o impossível. Descubra a verdade.
+          </p>
+          <div className="mt-8 flex flex-col gap-3">
           {hasSave && (
-            <Button size="lg" onClick={onResume}>
+            <Button size="lg" className="w-full" onClick={onResume}>
               Continuar investigação
             </Button>
           )}
-          <Button size="lg" variant={hasSave ? "outline" : "default"} onClick={onNew}>
-            {hasSave ? "Novo caso" : "Iniciar investigação"}
+          <Button size="lg" className="w-full" variant={hasSave ? "outline" : "default"} onClick={onNew}>
+            {hasSave ? "Nova jornada" : "Criar personagem"}
           </Button>
+          </div>
+          <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
+            {CASE.code}: {CASE.title}. Progresso salvo neste aparelho.
+          </p>
         </div>
-        <p className="mt-8 text-xs text-muted-foreground">
-          Investigadores: Adrian Vale e Samuel Crowe. Seu progresso é salvo neste aparelho.
-        </p>
       </div>
+    </main>
+  );
+}
+
+/* ------------------------------------------------------- caracterização */
+
+const PRONOUNS: PlayerCharacter["pronouns"][] = ["ela/dela", "ele/dele", "elu/delu"];
+const SPECIALTIES: Array<{ value: PlayerCharacter["specialty"]; description: string }> = [
+  { value: "Observação", description: "Percebe detalhes que passam despercebidos." },
+  { value: "Dedução", description: "Conecta fatos e desmonta contradições." },
+  { value: "Persuasão", description: "Consegue respostas onde há silêncio." },
+];
+
+function CharacterCreation({
+  onComplete,
+  onBack,
+}: {
+  onComplete: (character: PlayerCharacter) => void;
+  onBack: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [pronouns, setPronouns] = useState<PlayerCharacter["pronouns"]>("ela/dela");
+  const [specialty, setSpecialty] = useState<PlayerCharacter["specialty"]>("Observação");
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const cleanName = name.trim();
+    if (!cleanName) return;
+    onComplete({ name: cleanName, pronouns, specialty });
+  }
+
+  return (
+    <main className="character-screen min-h-screen px-4 py-10 sm:px-6 sm:py-16">
+      <form onSubmit={submit} className="mx-auto max-w-2xl">
+        <Button type="button" variant="ghost" size="sm" onClick={onBack}>
+          ← Voltar
+        </Button>
+        <p className="mt-8 text-xs uppercase tracking-[0.3em] text-primary">Arquivo do viajante</p>
+        <h1 className="mt-2 text-4xl sm:text-5xl">Quem atravessa o véu?</h1>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+          Toda investigação começa com uma identidade. Defina como seu nome será registrado nos
+          arquivos de VEILORIS.
+        </p>
+
+        <div className="mt-10 border-y border-border py-7">
+          <label htmlFor="character-name" className="text-display text-lg text-foreground">
+            Nome do investigador
+          </label>
+          <Input
+            id="character-name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Digite seu nome"
+            maxLength={32}
+            autoFocus
+            className="mt-3 h-12 bg-card/60 text-base"
+          />
+        </div>
+
+        <fieldset className="mt-7">
+          <legend className="text-display text-lg">Forma de tratamento</legend>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {PRONOUNS.map((value) => (
+              <Button
+                key={value}
+                type="button"
+                variant={pronouns === value ? "default" : "outline"}
+                onClick={() => setPronouns(value)}
+              >
+                {value}
+              </Button>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset className="mt-8">
+          <legend className="text-display text-lg">Especialidade</legend>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            {SPECIALTIES.map((option) => (
+              <Button
+                key={option.value}
+                type="button"
+                variant="outline"
+                onClick={() => setSpecialty(option.value)}
+                className={`h-auto min-h-24 whitespace-normal px-4 py-4 text-left ${
+                  specialty === option.value ? "border-primary bg-primary/10" : ""
+                }`}
+              >
+                <span>
+                  <strong className="text-display block text-base text-foreground">{option.value}</strong>
+                  <span className="mt-1 block text-xs font-normal leading-relaxed text-muted-foreground">
+                    {option.description}
+                  </span>
+                </span>
+              </Button>
+            ))}
+          </div>
+        </fieldset>
+
+        <Button type="submit" size="lg" disabled={!name.trim()} className="mt-10 w-full sm:w-auto">
+          Entrar em VEILORIS
+        </Button>
+      </form>
     </main>
   );
 }
 
 /* ------------------------------------------------------------- briefing */
 
-function Briefing({ onStart }: { onStart: () => void }) {
+function Briefing({ character, onStart }: { character: PlayerCharacter | null; onStart: () => void }) {
   return (
     <main className="mx-auto max-w-2xl px-6 py-16">
       <p className="text-xs uppercase tracking-[0.3em] text-primary">{CASE.code}</p>
       <h1 className="mt-2 text-4xl">{CASE.title}</h1>
+      {character && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          Arquivo de <span className="text-foreground">{character.name}</span> · {character.specialty} · {character.pronouns}
+        </p>
+      )}
 
       <div className="panel mt-8 p-6">
         <h2 className="text-xl">Premissa</h2>
@@ -164,6 +281,11 @@ function Hub({ game }: { game: GameApi }) {
         <div>
           <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{CASE.code}</p>
           <h1 className="text-2xl">{CASE.title}</h1>
+          {game.state.character && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              {game.state.character.name} · {game.state.character.specialty}
+            </p>
+          )}
         </div>
         <button
           className="text-xs text-muted-foreground underline underline-offset-4"
