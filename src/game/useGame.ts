@@ -107,10 +107,10 @@ export function useGame() {
     setState((s) => ({ ...s, accused: id, screen: "verdict" }));
   }, []);
 
-  const setCharacter = useCallback((character: PlayerCharacter) => {
+  function setCharacter(character: PlayerCharacter) {
     setState((s) => ({ ...s, started: true, character, screen: "briefing" }));
     setHasSave(true);
-  }, []);
+  }
 
   const has = useCallback((id: string) => state.clues.includes(id), [state.clues]);
   const hasAll = useCallback(
