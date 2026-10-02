@@ -1,23 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Game } from "@/components/game/Game";
+
+function ComingSoon() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-black text-white p-6">
+      <div className="text-center max-w-2xl">
+        <p className="text-sm uppercase tracking-[0.4em] opacity-70 mb-4">
+          VEILORIS
+        </p>
+        <h1 className="text-5xl font-bold mb-4">Fase 2</h1>
+        <p className="text-2xl mb-6 opacity-90">Coming Soon</p>
+        <p className="opacity-70">
+          Novas mecânicas, novos mistérios e uma experiência ainda maior estão em desenvolvimento.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "VEILORIS — O mistério além do tempo" },
-      {
-        name: "description",
-        content:
-          "Crie seu investigador em VEILORIS e desvende O Último Temporal por meio de pistas, interrogatórios e contradições.",
-      },
-      { property: "og:title", content: "VEILORIS — O mistério além do tempo" },
-      {
-        property: "og:description",
-        content: "Vinte pessoas a bordo. Um capitão morto. A verdade não está escondida — está espalhada.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+    meta: [{ title: "VEILORIS — Fase 2 em breve" }],
   }),
-  component: Game,
+  component: ComingSoon,
 });
