@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 520" role="img" aria-labelledby="title desc">
+<title id="title">Adrian Vale</title><desc id="desc">Ilustração estilizada de Adrian Vale, investigador e interrogador.</desc>
+<style>
+@keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes gesture{0%,100%{transform:rotate(0deg)}45%{transform:rotate(-8deg)}65%{transform:rotate(4deg)}}
+@keyframes nod{0%,100%{transform:rotate(0deg)}45%{transform:rotate(2deg)}}
+.person{transform-box:fill-box;transform-origin:center bottom;animation:breathe 3.2s ease-in-out infinite}
+.gesture{transform-box:fill-box;transform-origin:80% 20%;animation:gesture 2.8s ease-in-out infinite}
+.head{transform-box:fill-box;transform-origin:center bottom;animation:nod 4.4s ease-in-out infinite}
+</style>
+<g class="person">
+<ellipse cx="180" cy="493" rx="118" ry="15" fill="#050505" opacity=".35"/>
+<!-- seated body -->
+<path d="M83 489c5-93 20-171 59-201h76c39 30 54 108 59 201z" fill="#17191e" stroke="#8f8f94" stroke-width="2"/>
+<path d="M143 292h74l-13 78h-48z" fill="#641f2a"/>
+<path d="M153 292l27 38 27-38 10 76h-74z" fill="#eee9df"/>
+<!-- neck -->
+<path d="M157 273h46v37c-10 13-36 13-46 0z" fill="#c88f72"/>
+<!-- head -->
+<g class="head">
+<path d="M129 151c0-47 23-77 51-77s51 30 51 77v63c0 39-24 64-51 64s-51-25-51-64z" fill="#c99276" stroke="#38251f" stroke-width="2"/>
+<path d="M126 157c-8-50 14-92 55-92 39 0 58 30 54 83-12-17-29-27-49-28-20 1-42 13-60 37z" fill="#17151a"/>
+<path d="M135 118c12-30 36-45 68-38 15 3 28 12 34 27-17-6-31-10-46-8-20 2-38 9-56 19z" fill="#242329"/>
+<circle cx="160" cy="171" r="4" fill="#1d1715"/><circle cx="200" cy="171" r="4" fill="#1d1715"/>
+<path d="M168 206c8 5 16 5 24 0" fill="none" stroke="#6b4037" stroke-width="3" stroke-linecap="round"/>
+<path d="M146 157c9-6 18-7 28-2M187 155c9-5 18-4 27 2" fill="none" stroke="#2a1d1b" stroke-width="4" stroke-linecap="round"/>
+</g>
+<!-- left arm -->
+<path d="M98 319c-28 28-43 62-45 102-1 19 10 30 23 24 18-8 20-35 29-65l30-35z" fill="#17191e" stroke="#8f8f94" stroke-width="2"/>
+<!-- gesturing right arm -->
+<g class="gesture">
+<path d="M255 318c29 22 46 55 54 89 4 18-4 31-18 27-20-6-24-33-35-60l-31-40z" fill="#17191e" stroke="#8f8f94" stroke-width="2"/>
+<path d="M289 426c7 9 17 14 28 11" fill="none" stroke="#c99276" stroke-width="11" stroke-linecap="round"/>
+</g>
+<!-- chair hints -->
+<path d="M69 493h-22v-116M291 493h22v-116" stroke="#353941" stroke-width="8" opacity=".8"/>
+</g>
+</svg>
