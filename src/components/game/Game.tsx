@@ -40,18 +40,6 @@ export function Game() {
 
   if (!game.loaded) return <div className="min-h-screen" />;
 
-  if (state.screen === "title") {
-    return (
-      <CaseSelection
-        hasSave={game.hasSave}
-        onBack={() => setSelectedCase(0)}
-        onCase1={() => { game.reset(); setSelectedCase(1); game.go("character"); }}
-        onCase2={() => setSelectedCase(2)}
-        onResume={() => game.resume()}
-      />
-    );
-  }
-
   if (state.screen === "character") {
     return <CharacterCreation onComplete={game.setCharacter} onBack={() => game.go("title")} />;
   }
@@ -308,7 +296,7 @@ function Hub({ game }: { game: GameApi }) {
         </div>
         <button
           className="text-xs text-muted-foreground underline underline-offset-4"
-          onClick={() => game.go("title")}
+          onClick={() => { setSelectedCase(0); game.go("title"); }}
         >
           Menu
         </button>
