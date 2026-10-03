@@ -13,6 +13,7 @@ import {
 } from "@/game/case01";
 import { useGame, type PlayerCharacter } from "@/game/useGame";
 import { Button } from "@/components/ui/button";
+import { Case02Game } from "@/components/game/Case02Game";
 import { Input } from "@/components/ui/input";
 import coverAsset from "@/assets/veiloris-cover.png.asset.json";
 
@@ -33,6 +34,7 @@ export function Game() {
           game.go("character");
         }}
         onResume={() => game.resume()}
+        onCase2={() => game.go("title")}
       />
     );
   }
@@ -58,7 +60,9 @@ function TitleScreen({
   hasSave,
   onNew,
   onResume,
+  onCase2,
 }: {
+  onCase2: () => void;
   hasSave: boolean;
   onNew: () => void;
   onResume: () => void;
@@ -90,6 +94,9 @@ function TitleScreen({
           )}
           <Button size="lg" className="w-full" variant={hasSave ? "outline" : "default"} onClick={onNew}>
             {hasSave ? "Nova jornada" : "Criar personagem"}
+          </Button>
+          <Button size="lg" className="w-full" variant="outline" onClick={onCase2}>
+            CASO 02 · A Última Fotografia
           </Button>
           </div>
           <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
