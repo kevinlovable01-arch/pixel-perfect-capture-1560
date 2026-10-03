@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+<defs>
+  <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#17120f"/><stop offset=".55" stop-color="#241915"/><stop offset="1" stop-color="#0c0908"/></linearGradient>
+  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#33231b"/><stop offset="1" stop-color="#0b0807"/></linearGradient>
+  <linearGradient id="table" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#5b3b29"/><stop offset=".4" stop-color="#342117"/><stop offset="1" stop-color="#160e0b"/></linearGradient>
+  <radialGradient id="lamp"><stop stop-color="#ffd98a" stop-opacity=".9"/><stop offset=".25" stop-color="#e6a94f" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="18"/></filter>
+  <filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#wall)"/>
+<rect y="690" width="1600" height="210" fill="url(#floor)"/>
+<g opacity=".38" stroke="#5b3b2b" stroke-width="18"><path d="M0 80H1600M0 250H1600M0 420H1600M0 590H1600"/><path d="M100 0L0 100M360 0L0 360M720 0L0 720M1600 0L880 720"/></g>
+<g transform="translate(600 95)"><rect width="400" height="285" rx="8" fill="#090b0e" stroke="#6b4a35" stroke-width="18"/><rect x="25" y="25" width="350" height="235" fill="#10243a"/><path d="M25 205 Q120 145 195 205 T375 190V260H25Z" fill="#172d43"/><path d="M25 105 Q115 55 205 115 T375 90" fill="none" stroke="#91a8bc" stroke-opacity=".45" stroke-width="10"/><g stroke="#6b4a35" stroke-width="12"><path d="M125 25V260M250 25V260M25 142H375"/></g></g>
+<g transform="translate(1190 130)"><rect width="290" height="230" fill="#302017" stroke="#6a4832" stroke-width="12"/><path d="M25 200L265 30M25 155L220 20M100 210L275 75" stroke="#8b684b" stroke-width="3" opacity=".75"/><circle cx="145" cy="118" r="45" fill="none" stroke="#9b7855" stroke-width="3"/><path d="M145 70V166M98 118H192" stroke="#9b7855" stroke-width="3"/></g>
+<g transform="translate(55 120)" fill="#241710" stroke="#62442f" stroke-width="8"><rect width="360" height="430" rx="12"/><path d="M30 75H330M30 210H330M30 345H330"/><path d="M65 30V390M145 30V390M225 30V390M305 30V390"/></g>
+<g opacity=".9"><circle cx="480" cy="210" r="230" fill="url(#lamp)" filter="url(#glow)"/><path d="M455 105h50l18 85-20 55h-46l-20-55z" fill="#5b3c28" stroke="#b07b45" stroke-width="5"/><path d="M460 125h40v80h-40z" fill="#f5c76b" opacity=".8"/></g>
+<g transform="translate(105 430)" fill="#2c1b14" stroke="#765039" stroke-width="9"><path d="M25 0H205L230 310H0Z"/><path d="M25 0L0 310M205 0L230 310"/><path d="M35 70H195M30 145H200M25 220H205"/></g>
+<g transform="translate(1290 425)" fill="#2c1b14" stroke="#765039" stroke-width="9"><path d="M25 0H205L230 310H0Z"/><path d="M25 0L0 310M205 0L230 310"/><path d="M35 70H195M30 145H200M25 220H205"/></g>
+<ellipse cx="800" cy="690" rx="500" ry="70" fill="#000" opacity=".5" filter="url(#shadow)"/>
+<g transform="translate(430 510)"><rect width="740" height="85" rx="8" fill="url(#table)" stroke="#805538" stroke-width="8"/><path d="M45 80V350M695 80V350" stroke="#3a2418" stroke-width="38"/><path d="M160 85H580" stroke="#b07a4b" stroke-opacity=".35" stroke-width="6"/><ellipse cx="370" cy="40" rx="90" ry="20" fill="#080604" opacity=".35"/><path d="M310 20h120v35H310z" fill="#8a603f" opacity=".7"/></g>
+<g transform="translate(720 455)"><ellipse cx="80" cy="110" rx="140" ry="110" fill="url(#lamp)" filter="url(#glow)"/><path d="M45 20h70l15 105-20 45H50l-20-45z" fill="#5a3b27" stroke="#b17a43" stroke-width="5"/><rect x="45" y="42" width="70" height="80" fill="#ffd47b" opacity=".7"/></g>
+<g transform="translate(520 535)" fill="#c0a27a" opacity=".85"><path d="M0 15L115 0L130 35L12 55Z"/><path d="M18 67L130 45L140 75L28 95Z"/></g>
+<g transform="translate(250 690)" fill="#11100f" opacity=".75"><ellipse cx="0" cy="0" rx="95" ry="20"/><ellipse cx="1300" cy="0" rx="95" ry="20"/></g>
+<rect width="1600" height="900" fill="url(#lamp)" opacity=".08"/>
+</svg>
