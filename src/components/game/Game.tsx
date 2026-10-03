@@ -31,22 +31,47 @@ export function Game() {
     return <Case02Game character={state.character} difficulty={state.difficulty} onBack={() => { setSelectedCase(0); game.go("title"); }} />;
   }
 
-  if (selectedCase === 0 && state.screen === "title" && game.loaded) {
+  if (!game.loaded) return <div className="min-h-screen" />;
+
+  // Case selection must have priority over the title screen.
+  // Otherwise the title is rendered again immediately after clicking "Jogar".
+  if (showCaseSelection) {
     return (
-      <TitleScreen
+      <CaseSelection
         hasSave={game.hasSave}
-        onPlay={() => setShowCaseSelection(true)}
-        onResume={() => game.resume()}
+        onBack={() => setShowCaseSelection(false)}
+        onCase1={() => {
+          game.reset();
+          setSelectedCase(1);
+          setShowCaseSelection(false);
+          game.go("character");
+        }}
+        onCase2={() => {
+          game.reset();
+          setSelectedCase(2);
+          setShowCaseSelection(false);
+          game.go("character");
+        }}
+        onResume={() => {
+          setShowCaseSelection(false);
+          game.resume();
+        }}
       />
     );
   }
 
-  if (!game.loaded) return <div className="min-h-screen" />;
-
-  if (showCaseSelection) {
-    return <CaseSelection hasSave={game.hasSave} onBack={() => setShowCaseSelection(false)} onCase1={() => { game.reset(); setSelectedCase(1); setShowCaseSelection(false); game.go("character"); }} onCase2={() => { game.reset(); setSelectedCase(2); setShowCaseSelection(false); game.go("character"); }} onResume={() => game.resume()} />;
+  if (selectedCase === 0 && state.screen === "title") {
+    return (
+      <TitleScreen
+        hasSave={game.hasSave}
+        onPlay={() => setShowCaseSelection(true)}
+        onResume={() => {
+          setShowCaseSelection(false);
+          game.resume();
+        }}
+      />
+    );
   }
-
   if (state.screen === "character") {
     return <CharacterCreation onComplete={(character) => { game.setCharacter(character); }} onBack={() => { setSelectedCase(0); game.go("title"); }} />;
   }
