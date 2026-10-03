@@ -13,6 +13,7 @@ import pRowan from "@/assets/p-rowan.jpg";
 import pHugo from "@/assets/p-hugo.jpg";
 import pMiriam from "@/assets/p-miriam.jpg";
 import pDaniel from "@/assets/p-daniel.jpg";
+import { GENERATED_SCENE_IGNICAO } from "./generatedScenes";
 
 export const MAP_IMAGE = mapShip;
 
@@ -37,6 +38,7 @@ export type Spot = {
   gives?: string;
   flavor?: string;
   requires?: string[];
+  radius?: number;
 };
 
 export type Location = {
@@ -125,6 +127,7 @@ export const CLUES: Clue[] = [
   { id: "daniel_vela", title: "\"A vela estava apagada\"", text: "Daniel comenta, de passagem, que a vela da cabine estava apagada. Ninguém contou isso a ele.", source: "Interrogatório — Daniel Cross" },
   { id: "daniel_rotinas", title: "Rotinas que ele não deveria saber", text: "Daniel conhece horários de troca de turno e compartimentos que um aprendiz recém-embarcado não teria como conhecer.", source: "Interrogatório — Daniel Cross" },
   { id: "daniel_identidade", title: "O nome falso", text: "As entradas marcadas por Elias apontam para o embarque de Daniel: papéis inconsistentes, referências que não existem. Daniel Cross é o infiltrado — e foi ele quem alterou o registro das 17:42.", source: "Confronto — Daniel Cross" },
+  { id: "ignicao_vibracao", title: "Ferragem vibrando", text: "Uma peça da sala de ignição está frouxa e bate contra a estrutura quando o navio sofre uma rajada. O som seco pode viajar pelo casco durante a tempestade.", source: "Sala de ignição" },
 ];
 
 /** Conexões entre pistas — aparecem no caderno quando as duas pontas são conhecidas. */
@@ -170,6 +173,20 @@ export const LOCATIONS: Location[] = [
       { id: "ferragens", label: "Ferragens soltas", x: 22, y: 40, gives: "som" },
       { id: "costado", label: "O costado", x: 78, y: 66, gives: "sem_vestigios" },
       { id: "lampiao", label: "Lampião", x: 35, y: 55, flavor: "Preso firme. Ainda aceso, apesar do vento." },
+    ],
+  },
+  {
+    id: "ignicao",
+    name: "Sala de ignição",
+    subtitle: "O coração mecânico do navio",
+    description: "Caldeiras, válvulas, correntes e ferragens trabalham sob o ruído da tempestade. Nada aqui parece feito para chamar atenção — justamente por isso vale olhar duas vezes.",
+    image: GENERATED_SCENE_IGNICAO,
+    map: { x: 65, y: 27 },
+    spots: [
+      { id: "volante", label: "O volante", x: 55, y: 52, flavor: "Metal gasto pelo uso. A alavanca ainda vibra.", radius: 11 },
+      { id: "ferragem_ignicao", label: "Uma ferragem", x: 73, y: 67, gives: "ignicao_vibracao", radius: 10 },
+      { id: "corrente", label: "A corrente", x: 28, y: 65, flavor: "Pesada e oleosa. Parece estar no lugar certo.", radius: 9 },
+      { id: "valvula", label: "A válvula", x: 82, y: 37, flavor: "A pressão está estável apesar do temporal.", radius: 9 },
     ],
   },
   {
