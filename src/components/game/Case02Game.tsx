@@ -386,7 +386,7 @@ function Case02Debate({
     setStep(step === "arrival" ? "evidence" : step === "evidence" ? "connection" : "candidates");
   };
 
-  const scene = LOCATIONS.find((l) => l.id === "c2_conves") ?? LOCATIONS[0];
+  const scene = LOCATIONS.find((l) => l.id === "c2_conves") ?? LOCATIONS[0]!;
 
   if (step === "arrival") {
     return (
@@ -431,7 +431,8 @@ function Case02Debate({
   }
 
   return (
-    <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black">
+    <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFadeCase2 .45s ease-out both" }}>
+      <style>{`@keyframes veilFadeCase2 { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: scale(1); } }`}</style>
       <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/60 to-background" />
       <div className="relative min-h-[680px] p-5 sm:p-8">
@@ -470,7 +471,8 @@ function Case02DebateTurn({
   onChoose: (correct: boolean) => void;
 }) {
   return (
-    <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black">
+    <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFadeCase2 .45s ease-out both" }}>
+      <style>{`@keyframes veilFadeCase2 { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       <img src={LOCATIONS.find((l) => l.id === "c2_conves")?.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/60 to-background" />
       <div className="relative flex min-h-[680px] flex-col justify-end p-5 sm:p-8">
