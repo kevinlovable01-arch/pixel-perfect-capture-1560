@@ -22,17 +22,18 @@ type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 export function Game() {
   const game = useGame();
   const [selectedCase, setSelectedCase] = useState<0 | 1 | 2>(0);
+  const [showCaseSelection, setShowCaseSelection] = useState(false);
   const { state } = game;
 
-  if (selectedCase === 2) {
-    return <Case02Game onBack={() => setSelectedCase(0)} />;
+  if (selectedCase === 2 && state.screen === "hub") {
+    return <Case02Game character={state.character} onBack={() => { setSelectedCase(0); game.go("title"); }} />;
   }
 
   if (selectedCase === 0 && state.screen === "title" && game.loaded) {
     return (
       <TitleScreen
         hasSave={game.hasSave}
-        onPlay={() => setSelectedCase(1)}
+        onPlay={() => setShowCaseSelection(true)}
         onResume={() => game.resume()}
       />
     );
@@ -40,8 +41,12 @@ export function Game() {
 
   if (!game.loaded) return <div className="min-h-screen" />;
 
+  if (showCaseSelection) {
+    return <CaseSelection hasSave={game.hasSave} onBack={() => setShowCaseSelection(false)} onCase1={() => { game.reset(); setSelectedCase(1); setShowCaseSelection(false); game.go("character"); }} onCase2={() => { game.reset(); setSelectedCase(2); setShowCaseSelection(false); game.go("character"); }} onResume={() => game.resume()} />;
+  }
+
   if (state.screen === "character") {
-    return <CharacterCreation onComplete={game.setCharacter} onBack={() => game.go("title")} />;
+    return <CharacterCreation onComplete={(character) => { game.setCharacter(character); if (selectedCase === 2) game.go("hub"); }} onBack={() => { setSelectedCase(0); game.go("title"); }} />;
   }
 
   if (state.screen === "briefing") {
