@@ -1023,18 +1023,33 @@ function Conclusion({ game }: { game: GameApi }) {
 
 function DebateCharacters({ speaker }: { speaker: "Adrian Vale" | "Samuel Crowe" | null }) {
   return (
-    <div className="relative mx-auto h-[390px] max-w-4xl overflow-hidden rounded-sm border border-white/10 bg-black/35">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/70" />
-      <div className={`absolute bottom-[-8px] left-[2%] w-[48%] max-w-[330px] transition-transform duration-300 ${speaker === "Adrian Vale" ? "-translate-y-2" : ""}`}>
-        <img src={adrianDebate} alt="Adrian Vale" className="w-full drop-shadow-2xl" />
+    <div
+      className="relative mx-auto h-[430px] max-w-4xl overflow-hidden rounded-sm"
+      style={{ perspective: "1200px" }}
+    >
+      {/* The scene behind this component remains the actual location image.
+          Characters are transparent cutouts: no artificial black card, no fake room,
+          no second table. This makes them inherit the scene's light and atmosphere. */}
+      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none" />
+      <div className="absolute bottom-5 left-[14%] h-7 w-[30%] rounded-[50%] bg-black/45 blur-xl pointer-events-none" />
+      <div className="absolute bottom-5 right-[14%] h-7 w-[30%] rounded-[50%] bg-black/45 blur-xl pointer-events-none" />
+
+      <div
+        className={`absolute bottom-[-34px] left-[0%] w-[55%] max-w-[410px] origin-bottom transition-all duration-500 ${speaker === "Adrian Vale" ? "-translate-y-3 scale-[1.025] brightness-110" : "brightness-[.94]"}`}
+        style={{ filter: "drop-shadow(0 18px 18px rgba(0,0,0,.58)) saturate(.88) contrast(1.04)" }}
+      >
+        <img src={adrianDebate} alt="Adrian Vale" className="block w-full h-auto" />
       </div>
-      <div className={`absolute bottom-[-8px] right-[2%] w-[48%] max-w-[330px] transition-transform duration-300 ${speaker === "Samuel Crowe" ? "-translate-y-2" : ""}`}>
-        <img src={samuelDebate} alt="Samuel Crowe" className="w-full drop-shadow-2xl" />
+
+      <div
+        className={`absolute bottom-[-34px] right-[0%] w-[55%] max-w-[410px] origin-bottom transition-all duration-500 ${speaker === "Samuel Crowe" ? "-translate-y-3 scale-[1.025] brightness-110" : "brightness-[.94]"}`}
+        style={{ filter: "drop-shadow(0 18px 18px rgba(0,0,0,.58)) saturate(.88) contrast(1.04)" }}
+      >
+        <img src={samuelDebate} alt="Samuel Crowe" className="block w-full h-auto" />
       </div>
-      <div className="absolute bottom-0 left-1/2 h-24 w-[68%] -translate-x-1/2 rounded-t-[50%] border border-white/20 bg-gradient-to-b from-[#3a3029] via-[#1e1815] to-[#090807] shadow-2xl" />
-      <div className="absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-primary/30 bg-black/55 px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-primary backdrop-blur-sm">
-        Adrian · Samuel
-      </div>
+
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-black/10 via-transparent to-black/15 mix-blend-multiply" />
+      <div className="absolute inset-x-0 bottom-0 pointer-events-none border-b border-white/10" />
     </div>
   );
 }
