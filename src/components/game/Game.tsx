@@ -15,6 +15,7 @@ import { useGame, type PlayerCharacter } from "@/game/useGame";
 import { Button } from "@/components/ui/button";
 import { Case02Game } from "@/components/game/Case02Game";
 import { Input } from "@/components/ui/input";
+import { DIFFICULTIES, answerForDifficulty, shouldShowInvestigationSpot, type Difficulty } from "@/game/difficulty";
 import coverAsset from "@/assets/veiloris-cover.png.asset.json";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
@@ -26,7 +27,7 @@ export function Game() {
   const { state } = game;
 
   if (selectedCase === 2 && state.screen === "hub") {
-    return <Case02Game character={state.character} onBack={() => { setSelectedCase(0); game.go("title"); }} />;
+    return <Case02Game character={state.character} difficulty={state.difficulty} onBack={() => { setSelectedCase(0); game.go("title"); }} />;
   }
 
   if (selectedCase === 0 && state.screen === "title" && game.loaded) {
@@ -46,7 +47,11 @@ export function Game() {
   }
 
   if (state.screen === "character") {
-    return <CharacterCreation onComplete={(character) => { game.setCharacter(character); if (selectedCase === 2) game.go("hub"); }} onBack={() => { setSelectedCase(0); game.go("title"); }} />;
+    return <CharacterCreation onComplete={(character) => { game.setCharacter(character); }} onBack={() => { setSelectedCase(0); game.go("title"); }} />;
+  }
+
+  if (state.screen === "difficulty") {
+    return <DifficultySelection difficulty={state.difficulty} onComplete={(difficulty) => { game.setDifficulty(difficulty); if (selectedCase === 2) game.go("hub"); else game.go("briefing"); }} onBack={() => game.go("character")} />;
   }
 
   if (state.screen === "briefing") {
@@ -194,6 +199,62 @@ function CharacterCreation({
           Começar investigação
         </Button>
       </form>
+    </main>
+  );
+}
+
+function DifficultySelection({
+  difficulty,
+  onComplete,
+  onBack,
+}: {
+  difficulty: Difficulty;
+  onComplete: (difficulty: Difficulty) => void;
+  onBack: () => void;
+}) {
+  const [selected, setSelected] = useState<Difficulty>(difficulty ?? "media");
+
+  return (
+    <main className="character-screen min-h-screen px-4 py-10 sm:px-6 sm:py-16">
+      <div className="mx-auto max-w-4xl">
+        <Button type="button" variant="ghost" size="sm" onClick={onBack}>← Voltar</Button>
+        <p className="mt-8 text-xs uppercase tracking-[0.3em] text-primary">Nível da investigação</p>
+        <h1 className="mt-2 text-4xl sm:text-5xl">Quanto você quer que o caso esconda?</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          A dificuldade muda o comportamento das pessoas e a quantidade de pistas que permanecem visíveis.
+          A verdade do caso não muda: o que muda é quanto trabalho você terá para encontrá-la.
+        </p>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {(Object.keys(DIFFICULTIES) as Difficulty[]).map((level) => {
+            const item = DIFFICULTIES[level];
+            return (
+              <button
+                key={level}
+                type="button"
+                onClick={() => setSelected(level)}
+                className={`panel p-6 text-left transition-all hover:border-primary ${selected === level ? "border-primary bg-primary/10" : ""}`}
+              >
+                <p className="text-[10px] uppercase tracking-[0.25em] text-primary">{item.label}</p>
+                <h2 className="mt-2 text-2xl">{item.subtitle}</h2>
+                <p className="mt-5 text-xs uppercase tracking-wider text-primary">Interrogatório</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.interrogation}</p>
+                <p className="mt-5 text-xs uppercase tracking-wider text-primary">Investigação</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.investigation}</p>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="panel mt-6 p-5">
+          <p className="text-xs uppercase tracking-[0.2em] text-primary">Dificuldade escolhida</p>
+          <p className="mt-2 text-sm text-muted-foreground">{DIFFICULTIES[selected].label}: {DIFFICULTIES[selected].subtitle}</p>
+        </div>
+
+        <Button size="lg" className="mt-8 w-full sm:w-auto" onClick={() => onComplete(selected)}>
+          Confirmar dificuldade
+        </Button>
+      </div>
     </main>
   );
 }
@@ -395,7 +456,9 @@ function LocationView({
 
         <p className="mt-6 text-xs uppercase tracking-[0.25em] text-primary">Onde procurar?</p>
         <div className="mt-3 grid gap-2">
-          {location.spots.map((spot) => {
+          {location.spots.map((spot, index) => {
+            const hiddenByDifficulty = !shouldShowInvestigationSpot(spot.id, index, game.state.difficulty);
+            if (hiddenByDifficulty) return null;
             const locked = !game.hasAll(spot.requires);
             const done = !!spot.gives && game.has(spot.gives);
             return (
