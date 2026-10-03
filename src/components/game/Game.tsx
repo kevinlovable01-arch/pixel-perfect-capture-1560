@@ -909,7 +909,7 @@ function Conclusion({ game }: { game: GameApi }) {
       <DebateScene
         scene={scene}
         speaker={game.state.character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"}
-        line={completeEvidence}
+        line={completeEvidence
           ? "Os horários, o acesso e a inconsistência nos registros formam uma sequência. Agora precisamos decidir qual conexão realmente fecha o caso."
           : "Eu trouxe as peças que você não conseguiu ver. Agora precisamos separar a hipótese da conexão que realmente fecha o caso."}
         options={[
