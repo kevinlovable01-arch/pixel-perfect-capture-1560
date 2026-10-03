@@ -21,6 +21,7 @@ import coverAsset from "@/assets/veiloris-cover.png.asset.json";
 import adrianDebate from "@/assets/adrian-debate.svg";
 import samuelDebate from "@/assets/samuel-debate.svg";
 import samuelFullBody from "@/assets/samuel-crowe-fullbody.webp";
+import adrianFullBody from "@/assets/adrian-vale-fullbody.webp";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
@@ -208,6 +209,15 @@ function CharacterCreation({
               onClick={() => setSelected(item.value)}
               className={`panel p-6 text-left transition-all hover:border-primary ${selected === item.value ? "border-primary bg-primary/10" : ""}`}
             >
+              {item.value === "Persuasão" && (
+                <div className="mb-5 flex h-64 items-end justify-center overflow-hidden rounded-sm border border-white/10 bg-black/20">
+                  <img
+                    src={adrianFullBody}
+                    alt="Adrian Vale — interrogador"
+                    className="h-full w-auto object-contain object-bottom drop-shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                </div>
+              )}
               {item.value === "Observação" && (
                 <div className="mb-5 flex h-64 items-end justify-center overflow-hidden rounded-sm border border-white/10 bg-black/20">
                   <img
