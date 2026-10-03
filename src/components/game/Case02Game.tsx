@@ -10,10 +10,12 @@ import {
   VERDICTS,
 } from "@/game/case02";
 import { Button } from "@/components/ui/button";
+import { answerForDifficulty, shouldShowInvestigationSpot, type Difficulty } from "@/game/difficulty";
+import type { PlayerCharacter } from "@/game/useGame";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
-export function Case02Game({ character, onBack }: { character: PlayerCharacter | null; onBack: () => void }) {
+export function Case02Game({ character, difficulty, onBack }: { character: PlayerCharacter | null; difficulty: Difficulty; onBack: () => void }) {
   const [tab, setTab] = useState<Tab>("investigar");
   const [clues, setClues] = useState<string[]>([]);
   const [location, setLocation] = useState<(typeof LOCATIONS)[number] | null>(null);
@@ -94,7 +96,8 @@ export function Case02Game({ character, onBack }: { character: PlayerCharacter |
               <h2 className="text-2xl">{location.name}</h2>
               <p className="mt-2 text-sm text-muted-foreground">{location.description}</p>
               <div className="mt-6 grid gap-2">
-                {location.spots.map((spot) => {
+                {location.spots.map((spot, index) => {
+                  if (!shouldShowInvestigationSpot(spot.id, index, difficulty)) return null;
                   const done = !!spot.gives && has(spot.gives);
                   return (
                     <button key={spot.id} disabled={done} onClick={() => add(spot.gives)}
