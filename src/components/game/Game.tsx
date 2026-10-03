@@ -1023,15 +1023,15 @@ function Conclusion({ game }: { game: GameApi }) {
 
 function DebateCharacters({ speaker }: { speaker: "Adrian Vale" | "Samuel Crowe" | null }) {
   return (
-    <div className="relative mx-auto h-[330px] max-w-4xl overflow-hidden rounded-sm border border-white/10 bg-black/35">
+    <div className="relative mx-auto h-[390px] max-w-4xl overflow-hidden rounded-sm border border-white/10 bg-black/35">
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/70" />
-      <div className={`absolute bottom-[-22px] left-[4%] w-[42%] max-w-[330px] transition-transform duration-300 ${speaker === "Adrian Vale" ? "-translate-y-2" : ""}`}>
+      <div className={`absolute bottom-[-8px] left-[2%] w-[48%] max-w-[330px] transition-transform duration-300 ${speaker === "Adrian Vale" ? "-translate-y-2" : ""}`}>
         <img src={adrianDebate} alt="Adrian Vale" className="w-full drop-shadow-2xl" />
       </div>
-      <div className={`absolute bottom-[-22px] right-[4%] w-[42%] max-w-[330px] transition-transform duration-300 ${speaker === "Samuel Crowe" ? "-translate-y-2" : ""}`}>
+      <div className={`absolute bottom-[-8px] right-[2%] w-[48%] max-w-[330px] transition-transform duration-300 ${speaker === "Samuel Crowe" ? "-translate-y-2" : ""}`}>
         <img src={samuelDebate} alt="Samuel Crowe" className="w-full drop-shadow-2xl" />
       </div>
-      <div className="absolute bottom-0 left-1/2 h-20 w-[58%] -translate-x-1/2 rounded-t-[50%] border border-white/15 bg-[#171717]/95 shadow-2xl" />
+      <div className="absolute bottom-0 left-1/2 h-24 w-[68%] -translate-x-1/2 rounded-t-[50%] border border-white/20 bg-gradient-to-b from-[#3a3029] via-[#1e1815] to-[#090807] shadow-2xl" />
       <div className="absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-primary/30 bg-black/55 px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-primary backdrop-blur-sm">
         Adrian · Samuel
       </div>
