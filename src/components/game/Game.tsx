@@ -890,7 +890,6 @@ function Conclusion({ game }: { game: GameApi }) {
   const [step, setStep] = useState<DebateStep>("arrival");
   const [debateScore, setDebateScore] = useState(0);
   const [choice, setChoice] = useState<string | null>(null);
-  const [debateSceneId, setDebateSceneId] = useState<string | null>(null);
 
   const evidence = KEY_EVIDENCE.filter((id) => game.has(id));
   const completeEvidence = evidence.length === KEY_EVIDENCE.length;
@@ -939,15 +938,7 @@ function Conclusion({ game }: { game: GameApi }) {
               ))}
             </div>
 
-            {debateSceneId && (
-              <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-primary">Local escolhido</p>
-                  <p className="mt-1 text-sm text-foreground">{scene.name}</p>
-                </div>
-                <Button size="lg" onClick={() => setStep("evidence")}>Entrar na cena e começar</Button>
-              </div>
-            )}
+            
           </div>
         </div>
       </div>
