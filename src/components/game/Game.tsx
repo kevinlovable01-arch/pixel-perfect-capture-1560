@@ -1045,25 +1045,39 @@ function DebateCharacters({ speaker }: { speaker: "Adrian Vale" | "Samuel Crowe"
       className="relative mx-auto h-[430px] max-w-4xl overflow-hidden rounded-sm"
       style={{ perspective: "1200px" }}
     >
-      {/* The scene behind this component remains the actual location image.
-          Characters are transparent cutouts: no artificial black card, no fake room,
-          no second table. This makes them inherit the scene's light and atmosphere. */}
+      <style>{`
+        @keyframes veiloris-debate-breathe {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-3px) scale(1.006); }
+        }
+        @keyframes veiloris-debate-breathe-reverse {
+          0%, 100% { transform: translateY(-1px) scale(1); }
+          50% { transform: translateY(-4px) scale(1.006); }
+        }
+      `}</style>
+
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none" />
-      <div className="absolute bottom-5 left-[14%] h-7 w-[30%] rounded-[50%] bg-black/45 blur-xl pointer-events-none" />
-      <div className="absolute bottom-5 right-[14%] h-7 w-[30%] rounded-[50%] bg-black/45 blur-xl pointer-events-none" />
+      <div className="absolute bottom-5 left-[12%] h-7 w-[34%] rounded-[50%] bg-black/45 blur-xl pointer-events-none" />
+      <div className="absolute bottom-5 right-[12%] h-7 w-[34%] rounded-[50%] bg-black/45 blur-xl pointer-events-none" />
 
       <div
-        className={`absolute bottom-[-34px] left-[0%] w-[55%] max-w-[410px] origin-bottom transition-all duration-500 ${speaker === "Adrian Vale" ? "-translate-y-3 scale-[1.025] brightness-110" : "brightness-[.94]"}`}
-        style={{ filter: "drop-shadow(0 18px 18px rgba(0,0,0,.58)) saturate(.88) contrast(1.04)" }}
+        className={`absolute bottom-[-24px] left-[1%] w-[48%] max-w-[380px] origin-bottom transition-all duration-500 ${speaker === "Adrian Vale" ? "-translate-y-3 scale-[1.035] brightness-110" : "brightness-[.94]"}`}
+        style={{
+          filter: "drop-shadow(0 18px 18px rgba(0,0,0,.58)) saturate(.88) contrast(1.04)",
+          animation: "veiloris-debate-breathe 4.6s ease-in-out infinite",
+        }}
       >
-        <img src={adrianDebate} alt="Adrian Vale" className="block w-full h-auto" />
+        <img src={adrianFullBody} alt="Adrian Vale" className="block w-full h-auto object-contain object-bottom" />
       </div>
 
       <div
-        className={`absolute bottom-[-34px] right-[0%] w-[55%] max-w-[410px] origin-bottom transition-all duration-500 ${speaker === "Samuel Crowe" ? "-translate-y-3 scale-[1.025] brightness-110" : "brightness-[.94]"}`}
-        style={{ filter: "drop-shadow(0 18px 18px rgba(0,0,0,.58)) saturate(.88) contrast(1.04)" }}
+        className={`absolute bottom-[-24px] right-[1%] w-[48%] max-w-[380px] origin-bottom transition-all duration-500 ${speaker === "Samuel Crowe" ? "-translate-y-3 scale-[1.035] brightness-110" : "brightness-[.94]"}`}
+        style={{
+          filter: "drop-shadow(0 18px 18px rgba(0,0,0,.58)) saturate(.88) contrast(1.04)",
+          animation: "veiloris-debate-breathe-reverse 5.1s ease-in-out infinite",
+        }}
       >
-        <img src={samuelDebate} alt="Samuel Crowe" className="block w-full h-auto" />
+        <img src={samuelFullBody} alt="Samuel Crowe" className="block w-full h-auto object-contain object-bottom" />
       </div>
 
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-black/10 via-transparent to-black/15 mix-blend-multiply" />
@@ -1071,7 +1085,6 @@ function DebateCharacters({ speaker }: { speaker: "Adrian Vale" | "Samuel Crowe"
     </div>
   );
 }
-
 function DebateScene({
   scene,
   speaker,
