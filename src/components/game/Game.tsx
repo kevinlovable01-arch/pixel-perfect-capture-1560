@@ -886,75 +886,34 @@ function LockedMode({ title, text }: { title: string; text: string }) {
 }
 
 function Conclusion({ game }: { game: GameApi }) {
-  type DebateStep = "arrival" | "evidence" | "connection" | "candidates";
-  const [step, setStep] = useState<DebateStep>("arrival");
+  type DebateStep = "evidence" | "connection" | "candidates";
+  const [step, setStep] = useState<DebateStep>("evidence");
   const [debateScore, setDebateScore] = useState(0);
   const [choice, setChoice] = useState<string | null>(null);
 
   const evidence = KEY_EVIDENCE.filter((id) => game.has(id));
   const completeEvidence = evidence.length === KEY_EVIDENCE.length;
-  const debateSceneIds = ["conves", "registros", "ignicao", "porao", "cozinha", "navegacao"];
-  const debateScenes = debateSceneIds
-    .map((id) => LOCATIONS.find((location) => location.id === id))
-    .filter(Boolean) as Location[];
-  const scene = debateScenes.find((location) => location.id === debateSceneId) ?? debateScenes[0] ?? LOCATIONS[0]!;
+
+  // Caso 01 tem uma única sala de reunião para a conclusão.
+  // Não existe mais escolha de cenário: os dois investigadores fecham o caso juntos.
+  const scene = LOCATIONS.find((location) => location.id === "cabine") ?? LOCATIONS[0]!;
 
   const advance = (correct: boolean) => {
     if (correct) setDebateScore((score) => score + 1);
-    setStep((current) =>
-      current === "arrival" ? "evidence" : current === "evidence" ? "connection" : "candidates",
-    );
+    setStep((current) => current === "evidence" ? "connection" : "candidates");
   };
 
-  if (step === "arrival") {
-    return (
-      <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFade .45s ease-out both" }}>
-        <style>{`@keyframes veilFade { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: scale(1); } }`}</style>
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-black" />
-        <div className="relative flex min-h-[680px] flex-col p-5 sm:p-8">
-          <div className="mx-auto w-full max-w-4xl">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Conselho dos dois</p>
-            <h2 className="mt-2 text-3xl sm:text-4xl">Onde vocês vão juntar as peças?</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Adrian e Samuel deixam o resto da tripulação para trás. Você escolhe o lugar onde a conversa acontece.
-              O cenário não muda as provas — muda a atmosfera em que vocês vão reconstruir o caso.
-            </p>
-
-            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {debateScenes.map((location) => (
-                <button
-                  key={location.id}
-                  type="button"
-                  onClick={() => setDebateSceneId(location.id)}
-                  className={`group overflow-hidden rounded-sm border text-left transition-all ${debateSceneId === location.id ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/60"}`}
-                >
-                  <div className="relative aspect-[16/9] overflow-hidden">
-                    <img src={location.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                    <p className="absolute bottom-3 left-3 text-sm font-medium text-white">{location.name}</p>
-                  </div>
-                  <p className="px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-primary">{location.subtitle}</p>
-                </button>
-              ))}
-            </div>
-
-            
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (step === "evidence") {
-    const partnerHint = game.state.character?.specialty === "Observação"
-      ? "Adrian coloca os depoimentos sobre a mesa. Ele lembra que algumas respostas pareciam convincentes, mas não explicavam o horário do confronto."
-      : "Samuel abre o caderno sobre a mesa. Ele lembra onde encontrou cada detalhe e quais marcas não combinavam com a história contada pela tripulação.";
+    const firstSpeaker = game.state.character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe";
+    const line = game.state.character?.specialty === "Observação"
+      ? "Adrian espalha os depoimentos sobre a mesa. Samuel se senta do outro lado. Os dois deixam de discutir suspeitos e começam a separar o que realmente foi observado do que apenas foi contado."
+      : "Samuel abre o caderno sobre a mesa. Adrian se senta diante dele. Agora os dois precisam separar as pistas que foram vistas das histórias que a tripulação contou.";
 
     return (
       <DebateScene
         scene={scene}
-        speaker={game.state.character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"}
-        line={partnerHint}
+        speaker={firstSpeaker}
+        line={line}
         options={[
           { label: "Separar o que foi visto do que foi apenas dito.", correct: true },
           { label: "Começar pelo suspeito que mais parecia ter motivo.", correct: false },
@@ -965,13 +924,14 @@ function Conclusion({ game }: { game: GameApi }) {
   }
 
   if (step === "connection") {
+    const firstSpeaker = game.state.character?.specialty === "Observação" ? "Samuel Crowe" : "Adrian Vale";
     return (
       <DebateScene
         scene={scene}
-        speaker={game.state.character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"}
+        speaker={firstSpeaker}
         line={completeEvidence
-          ? "Os horários, o acesso e as inconsistências formam uma sequência. Agora precisamos decidir qual conexão realmente fecha o caso."
-          : "Eu trouxe as peças que você não conseguiu ver. Agora precisamos separar a hipótese da conexão que realmente fecha o caso."}
+          ? "As pistas começam a conversar entre si. Horário, acesso, som e os registros apontam para uma sequência. Agora precisamos decidir qual conexão realmente fecha o caso."
+          : "Temos peças suficientes para levantar uma hipótese, mas não para tratá-la como fato. Vamos cruzar o que cada um encontrou antes de escolher um nome."}
         options={[
           { label: "Cruzar horários, acesso e as pistas decisivas.", correct: true },
           { label: "Escolher quem tinha o motivo mais óbvio.", correct: false },
@@ -987,22 +947,23 @@ function Conclusion({ game }: { game: GameApi }) {
     : debateScore >= 1
       ? ["marcus", "rowan"]
       : ["hugo", "tobias"];
-  const candidatePeople = candidates.map((id) => SUSPECTS.find((s) => s.id === id)).filter(Boolean) as Suspect[];
+  const candidatePeople = candidates
+    .map((id) => SUSPECTS.find((s) => s.id === id))
+    .filter(Boolean) as Suspect[];
 
   return (
     <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFade .45s ease-out both" }}>
       <style>{`@keyframes veilFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-45" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-background" />
+      <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/40 to-background/95" />
       <div className="relative flex min-h-[680px] flex-col p-5 sm:p-8">
         <div className="mx-auto w-full max-w-4xl">
           <DebateCharacters speaker={null} />
-          <div className="mt-2 rounded-sm border border-white/15 bg-black/75 p-5 backdrop-blur-sm">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-primary">Debate encerrado</p>
+          <div className="mt-2 rounded-sm border border-white/15 bg-black/80 p-5 backdrop-blur-md">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-primary">Conclusão · Caso 01</p>
             <h2 className="mt-2 text-3xl text-white">Dois nomes ficaram de pé.</h2>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">
-              Vocês podem estar certos. Também podem ter construído uma leitura errada.
-              O jogo não vai corrigir vocês antes da escolha.
+              Adrian e Samuel chegaram até aqui juntos. A decisão final ainda é sua.
             </p>
           </div>
 
@@ -1011,11 +972,11 @@ function Conclusion({ game }: { game: GameApi }) {
               <button
                 key={s.id}
                 onClick={() => setChoice(s.id)}
-                className={`rounded-sm border border-white/15 bg-black/65 p-5 text-left text-white transition-all hover:border-primary ${choice === s.id ? "border-primary bg-primary/10" : ""}`}
+                className={`rounded-sm border border-white/15 bg-black/75 p-5 text-left text-white transition-all hover:border-primary ${choice === s.id ? "border-primary bg-primary/10" : ""}`}
               >
                 <p className="text-xs uppercase tracking-[0.2em] text-primary">{s.role}</p>
                 <h3 className="mt-1 text-xl">{s.name}</h3>
-                <p className="mt-2 text-xs text-white/55">Hipótese formada durante o debate.</p>
+                <p className="mt-2 text-xs text-white/55">Hipótese formada durante a conversa.</p>
               </button>
             ))}
           </div>
