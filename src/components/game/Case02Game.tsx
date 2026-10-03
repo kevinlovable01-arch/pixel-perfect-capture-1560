@@ -12,8 +12,48 @@ import {
 import { Button } from "@/components/ui/button";
 import { answerForDifficulty, shouldShowInvestigationSpot, type Difficulty } from "@/game/difficulty";
 import type { PlayerCharacter } from "@/game/useGame";
+import type { Spot } from "@/game/case01";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
+
+
+function Case02ClueCard({ id, notes, onAddNote }: { id: string; notes: string[]; onAddNote: (note: string) => void }) {
+  const clue = CLUES.find((x) => x.id === id)!;
+  const [note, setNote] = useState("");
+  const [saved, setSaved] = useState(false);
+  return (
+    <div className="dossier mt-5 p-5">
+      <p className="text-[11px] uppercase tracking-[0.25em] opacity-60">Evidência encontrada</p>
+      <h3 className="text-display mt-1 text-xl">{clue.title}</h3>
+      <p className="mt-2 text-sm leading-relaxed">{clue.text}</p>
+      <div className="mt-5 border-t border-border/60 pt-4">
+        <p className="text-xs uppercase tracking-[0.2em] text-primary">Seu caderno</p>
+        <p className="mt-1 text-xs text-muted-foreground">Nada é anotado automaticamente. Você decide o que merece entrar no caderno.</p>
+        <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Escreva sua própria interpretação..." className="mt-3 min-h-24 w-full rounded-sm border border-border bg-background p-3 text-sm outline-none focus:border-primary" />
+        <Button size="sm" className="mt-2" disabled={!note.trim() || saved} onClick={() => { onAddNote(note.trim()); setSaved(true); setNote(""); }}>
+          {saved ? "Anotação salva" : "Anotar no caderno"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Notebook02({ notes }: { notes: string[] }) {
+  return (
+    <div className="grid gap-3">
+      {notes.length ? notes.map((note, index) => (
+        <div key={index} className="panel p-5">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-primary">Anotação {index + 1}</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{note}</p>
+        </div>
+      )) : (
+        <div className="panel p-6">
+          <p className="text-sm text-muted-foreground">Seu caderno está vazio. Você terá que decidir sozinho o que vale registrar.</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Case02Game({ character, difficulty, onBack }: { character: PlayerCharacter | null; difficulty: Difficulty; onBack: () => void }) {
   const [tab, setTab] = useState<Tab>("investigar");
@@ -23,6 +63,8 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
   const [asked, setAsked] = useState<string[]>([]);
   const [choice, setChoice] = useState<string | null>(null);
   const [finished, setFinished] = useState(false);
+  const [notes, setNotes] = useState<string[]>([]);
+  const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
 
   const add = (id?: string) => {
     if (id && !clues.includes(id)) setClues((v) => [...v, id]);
@@ -58,7 +100,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
   const tabs: { id: Tab; label: string }[] = [
     { id: "investigar", label: "Investigar" },
     { id: "interrogar", label: "Interrogar" },
-    { id: "caderno", label: `Caderno (${clues.length})` },
+    { id: "caderno", label: `Caderno (${notes.length})` },
     { id: "linha", label: "Linha do tempo" },
     { id: "concluir", label: "Conclusão" },
   ];
@@ -91,34 +133,76 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
       <div className="mt-6">
         {tab === "investigar" && (location ? (
           <div>
-            <button className="text-xs text-muted-foreground underline" onClick={() => setLocation(null)}>← Voltar</button>
-            <div className="panel mt-3 p-6">
-              <h2 className="text-2xl">{location.name}</h2>
-              <p className="mt-2 text-sm text-muted-foreground">{location.description}</p>
-              <div className="mt-6 grid gap-2">
+            <button className="text-xs text-muted-foreground underline" onClick={() => { setLocation(null); setSelectedSpot(null); }}>← Voltar</button>
+            <div className="panel mt-3 overflow-hidden p-3 sm:p-5">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 className="text-2xl">{location.name}</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">{location.description}</p>
+                </div>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-primary">Examine a cena</p>
+              </div>
+
+              <div className="relative mt-5 aspect-[16/9] overflow-hidden rounded-sm border border-primary/30 bg-black">
+                <img src={location.image} alt={location.name} className="absolute inset-0 h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10 pointer-events-none" />
                 {location.spots.map((spot, index) => {
                   if (!shouldShowInvestigationSpot(spot.id, index, difficulty)) return null;
+                  const locked = !spot.requires || spot.requires.every((id) => clues.includes(id));
                   const done = !!spot.gives && has(spot.gives);
+                  const radius = spot.radius ?? 9;
                   return (
-                    <button key={spot.id} disabled={done} onClick={() => add(spot.gives)}
-                      className={`rounded-sm border px-4 py-3 text-left text-sm ${done ? "border-primary/40 text-muted-foreground" : "border-border hover:border-primary"}`}>
-                      {spot.label}
-                      <span className="block text-xs text-muted-foreground">{done ? "examinado" : (spot.flavor ?? "Examinar")}</span>
+                    <button
+                      key={spot.id}
+                      type="button"
+                      aria-label="Examinar detalhe da cena"
+                      disabled={!locked}
+                      onClick={() => {
+                        if (!locked) return;
+                        setSelectedSpot(spot);
+                        if (spot.gives) add(spot.gives);
+                      }}
+                      className="absolute rounded-full border border-transparent bg-transparent transition-all duration-200 hover:border-primary/80 hover:bg-primary/10 focus-visible:border-primary disabled:border-transparent disabled:bg-transparent"
+                      style={{ left: `${spot.x}%`, top: `${spot.y}%`, width: `${radius * 2}%`, height: `${radius * 2}%`, transform: "translate(-50%, -50%)" }}
+                    >
+                      {done && <span className="absolute inset-1 rounded-full border border-primary/55 opacity-70" />}
                     </button>
                   );
                 })}
+                <div className="absolute bottom-3 left-3 rounded-sm border border-white/15 bg-black/65 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-white/70 backdrop-blur-sm">
+                  Clique onde quiser investigar
+                </div>
               </div>
-              {clues.filter((id) => location.spots.some((s) => s.gives === id)).map((id) => {
-                const c = CLUES.find((x) => x.id === id)!;
-                return <div key={id} className="dossier mt-5 p-5"><p className="text-[11px] uppercase opacity-60">Pista registrada</p><h3 className="text-display mt-1 text-xl">{c.title}</h3><p className="mt-2 text-sm">{c.text}</p></div>;
-              })}
+
+              {selectedSpot && (
+                <div className="mt-4 rounded-sm border border-primary/35 bg-background/95 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.25em] text-primary">Examinando</p>
+                      <h3 className="text-display mt-1 text-xl">{selectedSpot.label}</h3>
+                    </div>
+                    <button type="button" className="text-xs text-muted-foreground underline" onClick={() => setSelectedSpot(null)}>Fechar</button>
+                  </div>
+                  {selectedSpot.gives ? (
+                    <Case02ClueCard id={selectedSpot.gives} notes={notes} onAddNote={(note) => setNotes((v) => [...v, note])} />
+                  ) : (
+                    <p className="mt-4 border-t border-border/60 pt-4 text-sm text-muted-foreground">
+                      {selectedSpot.flavor ?? "Nada conclusivo foi encontrado aqui."}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
-            {LOCATIONS.map((l) => <button key={l.id} className="panel p-5 text-left hover:border-primary" onClick={() => setLocation(l)}>
-              <h2 className="text-lg">{l.name}</h2><p className="mt-1 text-xs uppercase tracking-wider text-primary">{l.subtitle}</p><p className="mt-2 text-xs text-muted-foreground">{l.description}</p>
-            </button>)}
+            {LOCATIONS.map((l) => (
+              <button key={l.id} className="panel p-5 text-left hover:border-primary" onClick={() => { setLocation(l); setSelectedSpot(null); }}>
+                <h2 className="text-lg">{l.name}</h2>
+                <p className="mt-1 text-xs uppercase tracking-wider text-primary">{l.subtitle}</p>
+                <p className="mt-2 text-xs text-muted-foreground">{l.spots.filter((s) => s.gives && has(s.gives)).length}/{l.spots.filter((s) => s.gives).length} evidências encontradas</p>
+              </button>
+            ))}
           </div>
         ))}
 
