@@ -459,19 +459,36 @@ function LocationView({
           </div>
         ))}
 
-        {found && <ClueCard id={found} />}
+        {found && <ClueCard id={found} game={game} />}
       </div>
     </div>
   );
 }
 
-function ClueCard({ id }: { id: string }) {
+function ClueCard({ id, game }: { id: string; game?: GameApi }) {
   const clue = clueById(id);
+  const [note, setNote] = useState("");
+  const [saved, setSaved] = useState(false);
   return (
     <div className="dossier mt-6 p-5">
-      <p className="text-[11px] uppercase tracking-[0.25em] opacity-60">Pista registrada</p>
+      <p className="text-[11px] uppercase tracking-[0.25em] opacity-60">Descoberta</p>
       <h3 className="text-display mt-1 text-xl">{clue.title}</h3>
       <p className="mt-2 text-sm leading-relaxed">{clue.text}</p>
+      {game && (
+        <div className="mt-5 border-t border-border/60 pt-4">
+          <p className="text-xs uppercase tracking-[0.2em] text-primary">Seu caderno</p>
+          <p className="mt-1 text-xs text-muted-foreground">A pista não será anotada automaticamente. Escreva o que você considera importante.</p>
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Ex.: A porta não foi arrombada. Alguém entrou com permissão."
+            className="mt-3 min-h-24 w-full rounded-sm border border-border bg-background p-3 text-sm outline-none focus:border-primary"
+          />
+          <Button size="sm" className="mt-2" disabled={!note.trim() || saved} onClick={() => { game.addNote(note); setSaved(true); setNote(""); }}>
+            {saved ? "Anotação salva" : "Anotar no caderno"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -521,7 +538,7 @@ function SuspectView({
                     {q.aside.who === "adrian" ? "Adrian" : "Samuel"}: "{q.aside.line}"
                   </p>
                 )}
-                {q.gives && <ClueCard id={q.gives} />}
+                {q.gives && <ClueCard id={q.gives} game={game} />}
               </div>
             );
           })}
@@ -571,19 +588,18 @@ function SuspectView({
 /* -------------------------------------------------------------- caderno */
 
 function Notebook({ game }: { game: GameApi }) {
-  const found = CLUES.filter((c) => game.has(c.id));
-  if (found.length === 0)
-    return <p className="text-sm text-muted-foreground">Nenhuma pista registrada ainda.</p>;
-
+  const [note, setNote] = useState("");
   return (
-    <div className="grid gap-3">
-      {found.map((c) => (
-        <div key={c.id} className="panel p-5">
-          <h3 className="text-lg">{c.title}</h3>
-          <p className="mt-1 text-[11px] uppercase tracking-wider text-primary">{c.source}</p>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.text}</p>
-        </div>
-      ))}
+    <div>
+      <div className="panel p-5">
+        <p className="text-xs uppercase tracking-[0.2em] text-primary">Caderno do investigador</p>
+        <p className="mt-2 text-sm text-muted-foreground">Aqui ficam somente as anotações que você decidiu escrever. As descobertas do jogo não entram automaticamente.</p>
+        <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Escreva uma hipótese, conexão, horário ou detalhe..." className="mt-4 min-h-28 w-full rounded-sm border border-border bg-background p-3 text-sm outline-none focus:border-primary" />
+        <Button className="mt-2" size="sm" disabled={!note.trim()} onClick={() => { game.addNote(note); setNote(""); }}>Adicionar anotação</Button>
+      </div>
+      <div className="mt-5 grid gap-3">
+        {game.state.notes.length === 0 ? <p className="text-sm text-muted-foreground">Seu caderno está vazio.</p> : game.state.notes.map((n, i) => <div key={i} className="panel p-5"><p className="text-xs uppercase tracking-wider text-primary">Anotação {i + 1}</p><p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{n}</p></div>)}
+      </div>
     </div>
   );
 }
