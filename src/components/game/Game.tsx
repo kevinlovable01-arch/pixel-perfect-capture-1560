@@ -338,7 +338,7 @@ function Hub({ game }: { game: GameApi }) {
           <h1 className="text-2xl">{CASE.title}</h1>
           {game.state.character && (
             <p className="mt-1 text-xs text-muted-foreground">
-              {game.state.character.name} · {game.state.character.specialty}
+              {game.state.character.name} · {game.state.character.specialty} · {game.state.difficulty === "facil" ? "Fácil" : game.state.difficulty === "media" ? "Média" : "Difícil"}
             </p>
           )}
         </div>
@@ -627,7 +627,7 @@ function SuspectView({
                       <div key={qid} className="border-l border-primary/50 pl-3">
                         <p className="text-xs text-white/50">Pergunta {index + 1}</p>
                         <p className="mt-1 text-sm text-primary">Você: {q.q}</p>
-                        <p className="mt-1 text-sm leading-relaxed text-white/90">"{q.a}"</p>
+                        <p className="mt-1 text-sm leading-relaxed text-white/90">"{answerForDifficulty(q.a, game.state.difficulty)}"</p>
                         {q.tell && <p className="mt-2 text-xs italic text-white/55">{q.tell}</p>}
                         {q.aside && (
                           <p className="mt-2 text-xs italic text-white/55">
