@@ -84,7 +84,7 @@ export function shouldShowInvestigationSpot(
   // e evidências secundárias desaparecem até que a cadeia correta os revele.
   const hardCore = new Set([
     "vela", "mesa", "livro", "estantes", "ferragens", "cartas", "calculos",
-    "prateleira", "lanterna", "lacres", "moldura", "lacre", "diario", "chaves", "lista",
+    "prateleira", "lanterna", "lacres", "moldura", "lacre", "diario", "chaves", "lista", "mesa",
   ]);
   return hardCore.has(spotId) || index === 0;
 }
