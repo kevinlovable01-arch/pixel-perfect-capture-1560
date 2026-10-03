@@ -21,25 +21,33 @@ type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
 export function Game() {
   const game = useGame();
-  const [selectedCase, setSelectedCase] = useState<1 | 2>(1);
+  const [selectedCase, setSelectedCase] = useState<0 | 1 | 2>(0);
   const { state } = game;
 
   if (selectedCase === 2) {
-    return <Case02Game onBack={() => setSelectedCase(1)} />;
+    return <Case02Game onBack={() => setSelectedCase(0)} />;
+  }
+
+  if (selectedCase === 0 && state.screen === "title" && game.loaded) {
+    return (
+      <TitleScreen
+        hasSave={game.hasSave}
+        onPlay={() => setSelectedCase(1)}
+        onResume={() => game.resume()}
+      />
+    );
   }
 
   if (!game.loaded) return <div className="min-h-screen" />;
 
   if (state.screen === "title") {
     return (
-      <TitleScreen
+      <CaseSelection
         hasSave={game.hasSave}
-        onNew={() => {
-          game.reset();
-          game.go("character");
-        }}
-        onResume={() => game.resume()}
+        onBack={() => setSelectedCase(0)}
+        onCase1={() => { game.reset(); setSelectedCase(1); game.go("character"); }}
         onCase2={() => setSelectedCase(2)}
+        onResume={() => game.resume()}
       />
     );
   }
@@ -61,53 +69,52 @@ export function Game() {
 
 /* ---------------------------------------------------------------- título */
 
-function TitleScreen({
-  hasSave,
-  onNew,
-  onResume,
-  onCase2,
-}: {
-  onCase2: () => void;
-  hasSave: boolean;
-  onNew: () => void;
-  onResume: () => void;
-}) {
+function TitleScreen({ hasSave, onPlay, onResume }: { hasSave: boolean; onPlay: () => void; onResume: () => void }) {
   return (
     <main className="min-h-screen bg-background">
       <div className="mx-auto grid min-h-screen max-w-6xl lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="relative min-h-[68vh] overflow-hidden lg:min-h-screen">
-          <img
-            src={coverAsset.url}
-            alt="VEILORIS — O mistério além do tempo"
-            width={768}
-            height={768}
-            className="absolute inset-0 h-full w-full object-cover object-top"
-          />
+          <img src={coverAsset.url} alt="VEILORIS — O mistério além do tempo" width={768} height={768} className="absolute inset-0 h-full w-full object-cover object-top" />
           <div className="title-vignette absolute inset-0" />
         </div>
         <div className="relative flex flex-col justify-center border-t border-primary/30 px-6 py-10 lg:border-l lg:border-t-0 lg:px-9">
-          <p className="text-xs uppercase tracking-[0.3em] text-primary">Uma jornada começa</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-primary">Arquivo de mistérios</p>
           <h1 className="mt-2 text-4xl text-foreground">VEILORIS</h1>
-          <p className="mt-3 text-sm italic leading-relaxed text-muted-foreground">
-            Atravesse o véu. Observe o impossível. Descubra a verdade.
-          </p>
+          <p className="mt-3 text-sm italic leading-relaxed text-muted-foreground">Toda história esconde uma verdade. Você terá que encontrá-la.</p>
           <div className="mt-8 flex flex-col gap-3">
-          {hasSave && (
-            <Button size="lg" className="w-full" onClick={onResume}>
-              Continuar investigação
-            </Button>
-          )}
-          <Button size="lg" className="w-full" variant={hasSave ? "outline" : "default"} onClick={onNew}>
-            {hasSave ? "Nova jornada" : "Criar personagem"}
-          </Button>
-          <Button size="lg" className="w-full" variant="outline" onClick={onCase2}>
-            CASO 02 · A Última Fotografia
-          </Button>
+            <Button size="lg" className="w-full" onClick={onPlay}>Jogar</Button>
+            {hasSave && <Button size="lg" variant="outline" className="w-full" onClick={onResume}>Continuar investigação</Button>}
           </div>
-          <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-            {CASE.code}: {CASE.title}. Progresso salvo neste aparelho.
-          </p>
+          <p className="mt-6 text-xs leading-relaxed text-muted-foreground">Escolha um caso, investigue, interrogue e tire suas próprias conclusões.</p>
         </div>
+      </div>
+    </main>
+  );
+}
+
+function CaseSelection({ hasSave, onBack, onCase1, onCase2, onResume }: { hasSave: boolean; onBack: () => void; onCase1: () => void; onCase2: () => void; onResume: () => void }) {
+  return (
+    <main className="min-h-screen bg-background px-4 py-10 sm:px-6 sm:py-16">
+      <div className="mx-auto max-w-4xl">
+        <button className="text-xs text-muted-foreground underline underline-offset-4" onClick={onBack}>← Voltar</button>
+        <p className="mt-10 text-xs uppercase tracking-[0.3em] text-primary">Arquivo de casos</p>
+        <h1 className="mt-2 text-4xl sm:text-5xl">Escolha um mistério</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">Dois casos estão abertos. Cada um é uma investigação independente. Escolha onde sua investigação começa.</p>
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          <button onClick={onCase1} className="panel group p-6 text-left transition-all hover:border-primary">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-primary">CASO 01</p>
+            <h2 className="mt-2 text-2xl">O Último Temporal</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{CASE.premise}</p>
+            <span className="mt-6 inline-block text-xs uppercase tracking-wider text-primary">Abrir arquivo →</span>
+          </button>
+          <button onClick={onCase2} className="panel group p-6 text-left transition-all hover:border-primary">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-primary">CASO 02</p>
+            <h2 className="mt-2 text-2xl">A Última Fotografia</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Uma fotografia desaparece durante uma recepção privada. Um colecionador é encontrado inconsciente. O que parece um roubo pode esconder outra história.</p>
+            <span className="mt-6 inline-block text-xs uppercase tracking-wider text-primary">Abrir arquivo →</span>
+          </button>
+        </div>
+        {hasSave && <div className="panel mt-6 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm">Existe uma investigação em andamento.</p><p className="mt-1 text-xs text-muted-foreground">Você pode continuar exatamente de onde parou.</p></div><Button variant="outline" onClick={onResume}>Continuar investigação</Button></div>}
       </div>
     </main>
   );
