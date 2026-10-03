@@ -505,75 +505,159 @@ function SuspectView({
   onBack: () => void;
 }) {
   const [log, setLog] = useState<string[]>([]);
+  const scene = LOCATIONS.find((l) => l.id === suspect.scene);
+
+  const askedHere = log;
+  const availableQuestions = suspect.questions.filter((q) => {
+    const clueReady = game.hasAll(q.requires);
+    const questionReady = (q.requiresQuestions ?? []).every((id) => askedHere.includes(id));
+    return clueReady && questionReady && !askedHere.includes(q.id);
+  });
+
+  const hasLockedQuestions = suspect.questions.some((q) => {
+    if (askedHere.includes(q.id)) return false;
+    const clueReady = game.hasAll(q.requires);
+    const questionReady = (q.requiresQuestions ?? []).every((id) => askedHere.includes(id));
+    return !clueReady || !questionReady;
+  });
 
   return (
     <div>
       <button className="text-xs text-muted-foreground underline underline-offset-4" onClick={onBack}>
-        ← Voltar
+        ← Voltar aos interrogatórios
       </button>
-      <div className="panel mt-3 p-6">
-        <div className="flex items-center gap-4">
-          <img src={suspect.portrait} alt={suspect.name} className="h-20 w-20 rounded-sm border border-primary/40 object-cover" />
-          <div>
-            <h2 className="text-2xl leading-tight">{suspect.name}</h2>
-            <p className="text-xs uppercase tracking-wider text-primary">{suspect.role}</p>
-          </div>
-        </div>
-        <p className="mt-4 text-sm text-muted-foreground">{suspect.profile}</p>
 
-        <div className="mt-6 space-y-5">
-          {log.map((qid) => {
-            const q = suspect.questions.find((x) => x.id === qid)!;
-            return (
-              <div key={qid} className="border-l-2 border-border pl-4">
-                <p className="text-sm text-primary">— {q.q}</p>
-                <p className="mt-1 text-sm leading-relaxed">"{q.a}"</p>
-                {q.aside && (
-                  <p className="mt-3 text-xs italic text-muted-foreground">
-                    {q.aside.who === "adrian" ? "Adrian" : "Samuel"}: "{q.aside.line}"
+      <div className="relative mt-3 min-h-[720px] overflow-hidden rounded-sm border border-primary/30 bg-black">
+        {scene && (
+          <>
+            <img
+              src={scene.image}
+              alt={scene.name}
+              className="absolute inset-0 h-full w-full object-cover opacity-55"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/45 to-background" />
+          </>
+        )}
+
+        <div className="relative flex min-h-[720px] flex-col">
+          <div className="flex-1 px-4 pb-5 pt-5 sm:px-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Sala de interrogatório · {scene?.name ?? "A bordo"}</p>
+                <p className="mt-1 text-xs text-white/60">A pessoa está diante de você. Observe antes de perguntar.</p>
+              </div>
+              <span className="rounded-sm border border-white/20 bg-black/40 px-3 py-1 text-[10px] uppercase tracking-wider text-white/70">
+                {log.length} perguntas feitas
+              </span>
+            </div>
+
+            <div className="mx-auto mt-10 max-w-2xl">
+              <div className="relative mx-auto max-w-md">
+                <div className="absolute bottom-0 left-1/2 h-28 w-64 -translate-x-1/2 rounded-t-[45%] border border-primary/30 bg-black/50 shadow-2xl" />
+                <div className="relative mx-auto flex min-h-[360px] items-end justify-center overflow-hidden rounded-sm border border-white/20 bg-black/30 p-5">
+                  <img
+                    src={suspect.portrait}
+                    alt={suspect.name}
+                    className="h-[330px] w-full max-w-[260px] object-cover object-top drop-shadow-2xl"
+                  />
+                </div>
+              </div>
+
+              <div className="mx-auto mt-3 max-w-xl rounded-sm border border-white/15 bg-black/65 px-5 py-4 backdrop-blur-sm">
+                <p className="text-xs uppercase tracking-[0.22em] text-primary">{suspect.role}</p>
+                <h2 className="mt-1 text-2xl text-white">{suspect.name}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-white/70">{suspect.profile}</p>
+              </div>
+            </div>
+
+            {log.length > 0 && (
+              <div className="mx-auto mt-6 max-h-44 max-w-xl overflow-y-auto rounded-sm border border-white/10 bg-black/55 p-4 backdrop-blur-sm">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-primary">Depoimento</p>
+                <div className="mt-3 space-y-4">
+                  {log.map((qid, index) => {
+                    const q = suspect.questions.find((x) => x.id === qid);
+                    if (!q) return null;
+                    return (
+                      <div key={qid} className="border-l border-primary/50 pl-3">
+                        <p className="text-xs text-white/50">Pergunta {index + 1}</p>
+                        <p className="mt-1 text-sm text-primary">Você: {q.q}</p>
+                        <p className="mt-1 text-sm leading-relaxed text-white/90">"{q.a}"</p>
+                        {q.tell && <p className="mt-2 text-xs italic text-white/55">{q.tell}</p>}
+                        {q.aside && (
+                          <p className="mt-2 text-xs italic text-white/55">
+                            {q.aside.who === "adrian" ? "Adrian" : "Samuel"}: "{q.aside.line}"
+                          </p>
+                        )}
+                        {q.gives && (
+                          <p className="mt-2 text-[11px] uppercase tracking-wider text-primary">
+                            Nova pista descoberta — não foi anotada automaticamente.
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-white/15 bg-background/95 px-4 py-5 backdrop-blur-md sm:px-8">
+            <div className="mx-auto max-w-2xl">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-primary">O que você pergunta?</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Cada resposta pode abrir um novo caminho.
+                  </p>
+                </div>
+                {availableQuestions.length > 0 && (
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    {availableQuestions.length} caminho{availableQuestions.length === 1 ? "" : "s"} disponível{availableQuestions.length === 1 ? "" : "eis"}
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-4 grid gap-2">
+                {availableQuestions.map((q, index) => (
+                  <button
+                    key={q.id}
+                    onClick={() => {
+                      setLog((l) => [...l, q.id]);
+                      game.markAsked(`${suspect.id}:${q.id}`);
+                      if (q.gives) game.addClue(q.gives);
+                    }}
+                    className="group rounded-sm border border-border bg-card px-4 py-3 text-left transition-all hover:border-primary hover:bg-primary/5"
+                  >
+                    <span className="mr-2 text-[10px] text-primary">[{String(index + 1).padStart(2, "0")}]</span>
+                    <span className="text-sm">{q.q}</span>
+                    {(q.requiresQuestions?.length ?? 0) > 0 && (
+                      <span className="mt-1 block text-[10px] uppercase tracking-wider text-muted-foreground">
+                        Pergunta de seguimento
+                      </span>
+                    )}
+                  </button>
+                ))}
+
+                {availableQuestions.length === 0 && log.length === 0 && (
+                  <p className="rounded-sm border border-border/60 px-4 py-4 text-sm text-muted-foreground">
+                    Ainda não há perguntas liberadas. Investigue mais antes de iniciar este interrogatório.
                   </p>
                 )}
-                {q.gives && <ClueCard id={q.gives} game={game} />}
-              </div>
-            );
-          })}
-        </div>
 
-        <p className="mt-6 text-xs uppercase tracking-[0.25em] text-primary">
-          Como deseja continuar?
-        </p>
-        <div className="mt-3 grid gap-2">
-          {suspect.questions.map((q) => {
-            const locked = !game.hasAll(q.requires);
-            const used = log.includes(q.id);
-            if (locked)
-              return (
-                <div
-                  key={q.id}
-                  className="rounded-sm border border-border/60 px-4 py-3 text-sm text-muted-foreground/50"
-                >
-                  Pergunta indisponível — falta informação.
-                </div>
-              );
-            return (
-              <button
-                key={q.id}
-                disabled={used}
-                onClick={() => {
-                  setLog((l) => [...l, q.id]);
-                  game.markAsked(`${suspect.id}:${q.id}`);
-                  if (q.gives) game.addClue(q.gives);
-                }}
-                className={`rounded-sm border px-4 py-3 text-left text-sm transition-colors ${
-                  used
-                    ? "border-border/60 text-muted-foreground/60"
-                    : "border-border hover:border-primary"
-                }`}
-              >
-                {q.q}
-              </button>
-            );
-          })}
+                {availableQuestions.length === 0 && log.length > 0 && (
+                  <p className="rounded-sm border border-border/60 px-4 py-4 text-sm text-muted-foreground">
+                    Você esgotou as perguntas disponíveis por enquanto. Volte à investigação: novas pistas podem abrir outro caminho.
+                  </p>
+                )}
+
+                {hasLockedQuestions && availableQuestions.length > 0 && (
+                  <p className="pt-1 text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                    Existem outros caminhos ainda bloqueados por pistas ou respostas anteriores.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
