@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { answerForDifficulty, shouldShowInvestigationSpot, type Difficulty } from "@/game/difficulty";
 import type { PlayerCharacter } from "@/game/useGame";
 import type { Spot } from "@/game/case01";
+import adrianFullBody from "@/assets/adrian-vale-fullbody.webp";
+import samuelFullBody from "@/assets/samuel-crowe-fullbody.webp";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
