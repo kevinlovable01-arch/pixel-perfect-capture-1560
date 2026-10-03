@@ -893,7 +893,7 @@ function Conclusion({ game }: { game: GameApi }) {
     return (
       <DebateScene
         scene={scene}
-        speaker="Adrian Vale"
+        speaker={game.state.character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"}
         line={partnerHint}
         options={[
           { label: "Separar o que foi visto do que foi apenas dito.", correct: true },
@@ -908,8 +908,8 @@ function Conclusion({ game }: { game: GameApi }) {
     return (
       <DebateScene
         scene={scene}
-        speaker="Samuel Crowe"
-        line={completeEvidence
+        speaker={game.state.character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"}
+        line={completeEvidence}
           ? "Os horários, o acesso e a inconsistência nos registros formam uma sequência. Agora precisamos decidir qual conexão realmente fecha o caso."
           : "Eu trouxe as peças que você não conseguiu ver. Agora precisamos separar a hipótese da conexão que realmente fecha o caso."}
         options={[
