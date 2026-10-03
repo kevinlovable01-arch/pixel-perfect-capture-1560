@@ -230,7 +230,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
               <p className="mt-4 text-xs uppercase tracking-[0.25em] text-primary">Investigação visual bloqueada</p>
               <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">Você escolheu Adrian Vale. Samuel Crowe conduz a busca física por pistas. Seu caminho neste caso é o interrogatório.</p>
             </div>
-          )}
+          ))}
 
         {tab === "interrogar" && (suspect ? (
           <div>
@@ -311,7 +311,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
             <p className="mt-4 text-xs uppercase tracking-[0.25em] text-primary">Interrogatórios bloqueados</p>
             <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">Você escolheu Samuel Crowe. Adrian Vale conduz os interrogatórios. Seu caminho neste caso é a investigação visual.</p>
           </div>
-        ))
+        ))}
 
         {tab === "caderno" && <div className="grid gap-3">
           <div className="panel p-5">
