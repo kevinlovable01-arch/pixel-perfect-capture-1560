@@ -375,36 +375,61 @@ function Case02Debate({
   setChoice: (choice: string | null) => void;
   onFinish: () => void;
 }) {
+  const [debateSceneId, setDebateSceneId] = useState<string | null>(null);
   const clean = score >= 2;
   const candidates = clean ? ["c2_elisa", "c2_marcus"] : score >= 1 ? ["c2_marcus", "c2_helena"] : ["c2_miriam", "c2_helena"];
   const people = candidates.map((id) => suspects.find((s) => s.id === id)).filter(Boolean) as typeof SUSPECTS;
+  const debateSceneIds = ["c2_conves", "c2_registros", "c2_cabine", "c2_navegacao", "c2_porao"];
+  const debateScenes = debateSceneIds
+    .map((id) => LOCATIONS.find((location) => location.id === id))
+    .filter(Boolean) as typeof LOCATIONS;
+  const scene = debateScenes.find((location) => location.id === debateSceneId) ?? debateScenes[0] ?? LOCATIONS[0]!;
 
   const choose = (correct: boolean) => {
     if (correct) setScore((value) => value + 1);
     setStep(step === "arrival" ? "evidence" : step === "evidence" ? "connection" : "candidates");
   };
 
-  const scene = LOCATIONS.find((l) => l.id === "c2_conves") ?? LOCATIONS[0]!;
-
   if (step === "arrival") {
     return (
       <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black">
-        <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/60 to-background" />
-        <div className="relative flex min-h-[680px] flex-col justify-end p-5 sm:p-8">
-          <div className="mx-auto w-full max-w-3xl text-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-black" />
+        <div className="relative min-h-[680px] p-5 sm:p-8">
+          <div className="mx-auto max-w-4xl">
             <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Conselho dos dois</p>
-            <h2 className="mt-2 text-3xl text-white sm:text-4xl">Fechem a porta. Agora é só vocês dois.</h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/70">
-              O parceiro traz a outra metade da investigação. Vocês não precisam concordar —
-              precisam descobrir qual interpretação sobrevive quando as pistas são colocadas lado a lado.
+            <h2 className="mt-2 text-3xl text-white sm:text-4xl">Escolham o lugar antes de discutir.</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65">
+              Agora os dois ficam sozinhos. Você decide em qual parte do Aurora eles vão reconstruir o caso,
+              trocar informações e desafiar as próprias hipóteses.
             </p>
-            <div className="mx-auto mt-10 flex max-w-xl items-end justify-center gap-4">
-              <div className="flex h-44 w-32 flex-col items-center justify-end rounded-t-full border border-primary/30 bg-black/50 p-3"><div className="flex h-24 w-24 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-2xl text-primary">AV</div><div className="mt-2 h-7 w-20 rounded-t-full bg-black/80" /></div>
-              <div className="mb-4 h-14 w-48 rounded-[50%] border border-primary/30 bg-black/60 shadow-2xl" />
-              <div className="flex h-44 w-32 flex-col items-center justify-end rounded-t-full border border-primary/30 bg-black/50 p-3"><div className="flex h-24 w-24 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-2xl text-primary">SC</div><div className="mt-2 h-7 w-20 rounded-t-full bg-black/80" /></div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {debateScenes.map((location) => (
+                <button
+                  key={location.id}
+                  type="button"
+                  onClick={() => setDebateSceneId(location.id)}
+                  className={`group overflow-hidden rounded-sm border text-left transition-all ${debateSceneId === location.id ? "border-primary bg-primary/10" : "border-white/10 bg-black/40 hover:border-primary/60"}`}
+                >
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <img src={location.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+                    <p className="absolute bottom-3 left-3 text-sm font-medium text-white">{location.name}</p>
+                  </div>
+                  <p className="px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-primary">{location.subtitle}</p>
+                </button>
+              ))}
             </div>
-            <Button className="mt-8" size="lg" onClick={() => setStep("evidence")}>Começar a conversa</Button>
+
+            {debateSceneId && (
+              <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-primary">Local escolhido</p>
+                  <p className="mt-1 text-sm text-white">{scene.name}</p>
+                </div>
+                <Button size="lg" onClick={() => setStep("evidence")}>Entrar na cena e começar</Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -415,43 +440,87 @@ function Case02Debate({
     const line = character?.specialty === "Observação"
       ? "Você encontrou marcas e horários. Eu encontrei respostas. Mas nenhuma das duas coisas, sozinha, prova quem atacou Augusto."
       : "Você encontrou respostas. Eu encontrei marcas e horários. Mas nenhuma das duas coisas, sozinha, prova quem atacou Augusto.";
-    return <Case02DebateTurn speaker={character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"} line={line} options={[
-      { label: "Separar fatos observados de interpretações.", correct: true },
-      { label: "Começar pelo suspeito com o motivo mais evidente.", correct: false },
-    ]} onChoose={choose} />;
+    return (
+      <Case02DebateTurn
+        scene={scene}
+        speaker={character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"}
+        line={line}
+        options={[
+          { label: "Separar fatos observados de interpretações.", correct: true },
+          { label: "Começar pelo suspeito com o motivo mais evidente.", correct: false },
+        ]}
+        onChoose={choose}
+      />
+    );
   }
 
   if (step === "connection") {
-    return <Case02DebateTurn speaker={character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"} line={evidence >= keyEvidenceCount ? "A chave, a cera, a lista e a identidade falsa formam uma sequência. Falta decidir quem essa sequência realmente aponta." : "Eu trouxe as peças que você não encontrou. Agora temos a sequência completa — mas ainda precisamos interpretá-la sem forçar uma hipótese."} options={[
-      { label: "Cruzar acesso, horários e a identidade falsa.", correct: true },
-      { label: "Escolher a pessoa mais suspeita e adaptar as pistas a ela.", correct: false },
-    ]} onChoose={choose} />;
+    return (
+      <Case02DebateTurn
+        scene={scene}
+        speaker={character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"}
+        line={evidence >= keyEvidenceCount
+          ? "A chave, a cera, a lista e a identidade falsa formam uma sequência. Falta decidir quem essa sequência realmente aponta."
+          : "Eu trouxe as peças que você não encontrou. Agora temos a sequência completa — mas ainda precisamos interpretá-la sem forçar uma hipótese."}
+        options={[
+          { label: "Cruzar acesso, horários e a identidade falsa.", correct: true },
+          { label: "Escolher a pessoa mais suspeita e adaptar as pistas a ela.", correct: false },
+        ]}
+        onChoose={choose}
+      />
+    );
   }
 
   return (
     <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFadeCase2 .45s ease-out both" }}>
-      <style>{`@keyframes veilFadeCase2 { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: scale(1); } }`}</style>
-      <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/60 to-background" />
+      <style>{`@keyframes veilFadeCase2 { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <img src={scene.image} alt={scene.name} className="absolute inset-0 h-full w-full object-cover opacity-45" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-background" />
       <div className="relative min-h-[680px] p-5 sm:p-8">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Debate encerrado</p>
-          <h2 className="mt-2 text-3xl text-white">Dois nomes ficaram de pé.</h2>
-          <p className="mt-3 max-w-xl text-sm text-white/65">Vocês podem estar certos. Também podem ter construído uma leitura errada. O jogo não vai corrigir vocês antes da escolha.</p>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+        <div className="mx-auto max-w-4xl">
+          <Case02DebateCharacters speaker={null} />
+          <div className="mt-2 rounded-sm border border-white/15 bg-black/75 p-5 backdrop-blur-sm">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Debate encerrado</p>
+            <h2 className="mt-2 text-3xl text-white">Dois nomes ficaram de pé.</h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">
+              Vocês podem estar certos. Também podem ter construído uma leitura errada.
+              O jogo não vai corrigir vocês antes da escolha.
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {people.map((person) => (
-              <button key={person.id} onClick={() => setChoice(person.id)} className={`rounded-sm border border-white/15 bg-black/55 p-5 text-left text-white hover:border-primary ${choice === person.id ? "border-primary bg-primary/10" : ""}`}>
+              <button key={person.id} onClick={() => setChoice(person.id)} className={`rounded-sm border border-white/15 bg-black/65 p-5 text-left text-white transition-all hover:border-primary ${choice === person.id ? "border-primary bg-primary/10" : ""}`}>
                 <p className="text-xs uppercase tracking-[0.2em] text-primary">{person.role}</p>
                 <h3 className="mt-1 text-xl">{person.name}</h3>
                 <p className="mt-2 text-xs text-white/55">Nome levantado durante a conversa.</p>
               </button>
             ))}
           </div>
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
             <p className="text-xs text-white/50">Evidências decisivas encontradas: {evidence}/{keyEvidenceCount} · Debate: {score}/2</p>
             <Button size="lg" disabled={!choice} onClick={onFinish}>Escolher este nome</Button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function Case02DebateCharacters({ speaker }: { speaker: "Adrian Vale" | "Samuel Crowe" | null }) {
+  return (
+    <div className="relative mx-auto h-[330px] max-w-4xl overflow-hidden rounded-sm border border-white/10 bg-black/35">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/70" />
+      <div className={`absolute bottom-[-22px] left-[4%] w-[42%] max-w-[330px] transition-transform duration-300 ${speaker === "Adrian Vale" ? "-translate-y-2" : ""}`}>
+        <img src={adrianDebate} alt="Adrian Vale" className="w-full drop-shadow-2xl" />
+      </div>
+      <div className={`absolute bottom-[-22px] right-[4%] w-[42%] max-w-[330px] transition-transform duration-300 ${speaker === "Samuel Crowe" ? "-translate-y-2" : ""}`}>
+        <img src={samuelDebate} alt="Samuel Crowe" className="w-full drop-shadow-2xl" />
+      </div>
+      <div className="absolute bottom-0 left-1/2 h-20 w-[58%] -translate-x-1/2 rounded-t-[50%] border border-white/15 bg-[#171717]/95 shadow-2xl" />
+      <div className="absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-primary/30 bg-black/55 px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-primary backdrop-blur-sm">
+        Adrian · Samuel
       </div>
     </div>
   );
