@@ -121,25 +121,69 @@ export function Case02Game({ onBack }: { onBack: () => void }) {
 
         {tab === "interrogar" && (suspect ? (
           <div>
-            <button className="text-xs text-muted-foreground underline" onClick={() => setSuspect(null)}>← Voltar</button>
-            <div className="panel mt-3 p-6">
-              <h2 className="text-2xl">{suspect.name}</h2><p className="text-xs uppercase text-primary">{suspect.role}</p>
-              <p className="mt-3 text-sm text-muted-foreground">{suspect.profile}</p>
-              <div className="mt-6 space-y-4">
-                {asked.filter((id) => id.startsWith(suspect.id + ":")).map((key) => {
-                  const qid = key.split(":")[1]; const q = suspect.questions.find((x) => x.id === qid)!;
-                  return <div key={key} className="border-l-2 border-border pl-4"><p className="text-sm text-primary">— {q.q}</p><p className="mt-1 text-sm">"{q.a}"</p>{q.gives && <p className="mt-2 text-xs text-muted-foreground">Pista registrada: {CLUES.find((c) => c.id === q.gives)?.title}</p>}</div>;
-                })}
-              </div>
-              <div className="mt-6 grid gap-2">
-                {suspect.questions.map((q) => {
-                  const key = suspect.id + ":" + q.id; const used = asked.includes(key);
-                  const locked = q.requires?.some((r) => !has(r));
-                  return <button key={q.id} disabled={used || locked} onClick={() => { setAsked((v) => [...v, key]); add(q.gives); }}
-                    className={`rounded-sm border px-4 py-3 text-left text-sm ${used || locked ? "border-border/50 text-muted-foreground/50" : "border-border hover:border-primary"}`}>
-                    {locked ? "Pergunta indisponível — falta informação." : q.q}
-                  </button>;
-                })}
+            <button className="text-xs text-muted-foreground underline" onClick={() => setSuspect(null)}>← Voltar aos interrogatórios</button>
+            <div className="relative mt-3 min-h-[720px] overflow-hidden rounded-sm border border-primary/30 bg-black">
+              <img src={LOCATIONS.find((l) => l.id === suspect.scene)?.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-55" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-background" />
+              <div className="relative flex min-h-[720px] flex-col">
+                <div className="flex-1 px-4 pb-5 pt-5 sm:px-8">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Interrogatório · {LOCATIONS.find((l) => l.id === suspect.scene)?.name ?? "A bordo"}</p>
+                      <p className="mt-1 text-xs text-white/60">Observe a pessoa antes de escolher sua próxima pergunta.</p>
+                    </div>
+                    <span className="rounded-sm border border-white/20 bg-black/40 px-3 py-1 text-[10px] uppercase tracking-wider text-white/70">{asked.filter((id) => id.startsWith(suspect.id + ":")).length} perguntas</span>
+                  </div>
+
+                  <div className="mx-auto mt-10 max-w-md">
+                    <div className="relative">
+                      <div className="absolute bottom-0 left-1/2 h-28 w-64 -translate-x-1/2 rounded-t-[45%] border border-primary/30 bg-black/50 shadow-2xl" />
+                      <div className="relative flex min-h-[360px] items-end justify-center overflow-hidden rounded-sm border border-white/20 bg-black/30 p-5">
+                        <img src={suspect.portrait} alt={suspect.name} className="h-[330px] w-full max-w-[260px] object-cover object-top drop-shadow-2xl" />
+                      </div>
+                    </div>
+                    <div className="mt-3 rounded-sm border border-white/15 bg-black/65 px-5 py-4 backdrop-blur-sm">
+                      <p className="text-xs uppercase tracking-[0.22em] text-primary">{suspect.role}</p>
+                      <h2 className="mt-1 text-2xl text-white">{suspect.name}</h2>
+                      <p className="mt-2 text-sm leading-relaxed text-white/70">{suspect.profile}</p>
+                    </div>
+                  </div>
+
+                  {asked.filter((id) => id.startsWith(suspect.id + ":")).length > 0 && (
+                    <div className="mx-auto mt-6 max-h-44 max-w-xl overflow-y-auto rounded-sm border border-white/10 bg-black/55 p-4 backdrop-blur-sm">
+                      <p className="text-[10px] uppercase tracking-[0.25em] text-primary">Depoimento</p>
+                      <div className="mt-3 space-y-4">
+                        {asked.filter((id) => id.startsWith(suspect.id + ":")).map((key, index) => {
+                          const qid = key.split(":")[1]; const q = suspect.questions.find((x) => x.id === qid)!;
+                          return <div key={key} className="border-l border-primary/50 pl-3"><p className="text-xs text-white/50">Pergunta {index + 1}</p><p className="mt-1 text-sm text-primary">Você: {q.q}</p><p className="mt-1 text-sm leading-relaxed text-white/90">"{q.a}"</p>{q.tell && <p className="mt-2 text-xs italic text-white/55">{q.tell}</p>}</div>;
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t border-white/15 bg-background/95 px-4 py-5 backdrop-blur-md sm:px-8">
+                  <div className="mx-auto max-w-2xl">
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-primary">O que você pergunta?</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Cada resposta pode abrir uma nova pergunta ou outro caminho.</p>
+                    <div className="mt-4 grid gap-2">
+                      {suspect.questions.filter((q) => {
+                        const key = suspect.id + ":" + q.id;
+                        const used = asked.includes(key);
+                        const clueReady = !q.requires?.some((r) => !has(r));
+                        const questionReady = (q.requiresQuestions ?? []).every((id) => asked.includes(suspect.id + ":" + id));
+                        return !used && clueReady && questionReady;
+                      }).map((q, index) => (
+                        <button key={q.id} onClick={() => { setAsked((v) => [...v, suspect.id + ":" + q.id]); add(q.gives); }}
+                          className="group rounded-sm border border-border bg-card px-4 py-3 text-left text-sm transition-all hover:border-primary hover:bg-primary/5">
+                          <span className="mr-2 text-[10px] text-primary">[{String(index + 1).padStart(2, "0")}]</span>{q.q}
+                          {(q.requiresQuestions?.length ?? 0) > 0 && <span className="mt-1 block text-[10px] uppercase tracking-wider text-muted-foreground">Pergunta de seguimento</span>}
+                        </button>
+                      ))}
+                      <p className="pt-1 text-[10px] uppercase tracking-wider text-muted-foreground/70">Perguntas bloqueadas podem ser abertas ao investigar novas pistas ou seguir outro ramo da conversa.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
