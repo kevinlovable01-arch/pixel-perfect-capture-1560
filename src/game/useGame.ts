@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Difficulty } from "./difficulty";
 
-export type Screen = "title" | "character" | "briefing" | "hub" | "verdict";
+export type Screen = "title" | "character" | "difficulty" | "briefing" | "hub" | "verdict";
 
 export type PlayerCharacter = {
   name: string;
