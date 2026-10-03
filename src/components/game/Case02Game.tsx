@@ -214,8 +214,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
               )}
             </div>
           </div>
-        ) : (
-          {canInvestigate ? (
+        ) : canInvestigate ? (
             <div className="grid gap-3 sm:grid-cols-2">
               {LOCATIONS.map((l) => (
                 <button key={l.id} className="panel p-5 text-left hover:border-primary" onClick={() => { setLocation(l); setSelectedSpot(null); }}>
@@ -231,8 +230,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
               <p className="mt-4 text-xs uppercase tracking-[0.25em] text-primary">Investigação visual bloqueada</p>
               <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">Você escolheu Adrian Vale. Samuel Crowe conduz a busca física por pistas. Seu caminho neste caso é o interrogatório.</p>
             </div>
-          )}
-        ))}
+          ))}
 
         {tab === "interrogar" && (suspect ? (
           <div>
@@ -313,7 +311,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
             <p className="mt-4 text-xs uppercase tracking-[0.25em] text-primary">Interrogatórios bloqueados</p>
             <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">Você escolheu Samuel Crowe. Adrian Vale conduz os interrogatórios. Seu caminho neste caso é a investigação visual.</p>
           </div>
-        ))
+        ))}
 
         {tab === "caderno" && <div className="grid gap-3">
           <div className="panel p-5">
@@ -424,7 +422,7 @@ function Case02Debate({
   }
 
   if (step === "connection") {
-    return <Case02DebateTurn speaker={character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"} line={evidence >= keyEvidenceCount} ? "A chave, a cera, a lista e a identidade falsa formam uma sequência. Falta decidir quem essa sequência realmente aponta." : "Eu trouxe as peças que você não encontrou. Agora temos a sequência completa — mas ainda precisamos interpretá-la sem forçar uma hipótese."} options={[
+    return <Case02DebateTurn speaker={character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"} line={evidence >= keyEvidenceCount ? "A chave, a cera, a lista e a identidade falsa formam uma sequência. Falta decidir quem essa sequência realmente aponta." : "Eu trouxe as peças que você não encontrou. Agora temos a sequência completa — mas ainda precisamos interpretá-la sem forçar uma hipótese."} options={[
       { label: "Cruzar acesso, horários e a identidade falsa.", correct: true },
       { label: "Escolher a pessoa mais suspeita e adaptar as pistas a ela.", correct: false },
     ]} onChoose={choose} />;
