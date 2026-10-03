@@ -110,11 +110,21 @@ function CaseSelection({ hasSave, onBack, onCase1, onCase2, onResume }: { hasSav
 
 /* ------------------------------------------------------- caracterização */
 
-const PRONOUNS: PlayerCharacter["pronouns"][] = ["ela/dela", "ele/dele", "elu/delu"];
-const SPECIALTIES: Array<{ value: PlayerCharacter["specialty"]; description: string }> = [
-  { value: "Observação", description: "Percebe detalhes que passam despercebidos." },
-  { value: "Dedução", description: "Conecta fatos e desmonta contradições." },
-  { value: "Persuasão", description: "Consegue respostas onde há silêncio." },
+const INVESTIGATORS: Array<{ value: PlayerCharacter["specialty"]; name: string; role: string; description: string; quote: string }> = [
+  {
+    value: "Persuasão",
+    name: "Adrian Vale",
+    role: "O interrogador",
+    description: "Lê hesitações, pressiona contradições e consegue respostas que outras pessoas não conseguem.",
+    quote: "Uma pessoa pode esconder um fato. É muito mais difícil esconder uma história inteira.",
+  },
+  {
+    value: "Observação",
+    name: "Samuel Crowe",
+    role: "O rastreador de pistas",
+    description: "Percebe detalhes nos locais, reconstrói movimentos e encontra evidências onde ninguém procurou.",
+    quote: "Todo lugar guarda alguma coisa. A questão é saber onde olhar.",
+  },
 ];
 
 function CharacterCreation({
@@ -124,87 +134,59 @@ function CharacterCreation({
   onComplete: (character: PlayerCharacter) => void;
   onBack: () => void;
 }) {
-  const [name, setName] = useState("");
-  const [pronouns, setPronouns] = useState<PlayerCharacter["pronouns"]>("ela/dela");
-  const [specialty, setSpecialty] = useState<PlayerCharacter["specialty"]>("Observação");
+  const [selected, setSelected] = useState<PlayerCharacter["specialty"] | null>(null);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const cleanName = name.trim();
-    if (!cleanName) return;
-    onComplete({ name: cleanName, pronouns, specialty });
+    if (!selected) return;
+    const investigator = INVESTIGATORS.find((item) => item.value === selected)!;
+    onComplete({
+      name: investigator.name,
+      pronouns: investigator.value === "Persuasão" ? "ele/dele" : "ele/dele",
+      specialty: investigator.value,
+    });
   }
 
   return (
     <main className="character-screen min-h-screen px-4 py-10 sm:px-6 sm:py-16">
-      <form onSubmit={submit} className="mx-auto max-w-2xl">
-        <Button type="button" variant="ghost" size="sm" onClick={onBack}>
-          ← Voltar
-        </Button>
-        <p className="mt-8 text-xs uppercase tracking-[0.3em] text-primary">Arquivo do viajante</p>
-        <h1 className="mt-2 text-4xl sm:text-5xl">Quem atravessa o véu?</h1>
-        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          Toda investigação começa com uma identidade. Defina como seu nome será registrado nos
-          arquivos de VEILORIS.
+      <form onSubmit={submit} className="mx-auto max-w-3xl">
+        <Button type="button" variant="ghost" size="sm" onClick={onBack}>← Voltar</Button>
+        <p className="mt-8 text-xs uppercase tracking-[0.3em] text-primary">Os dois investigadores</p>
+        <h1 className="mt-2 text-4xl sm:text-5xl">Quem vai conduzir o caso?</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          Adrian e Samuel cresceram juntos. Hoje trabalham em segredo para pessoas que não podem
+          levar seus próprios problemas às autoridades. Cada um investiga de uma maneira diferente.
+          Escolha apenas um para conduzir esta investigação.
         </p>
 
-        <div className="mt-10 border-y border-border py-7">
-          <label htmlFor="character-name" className="text-display text-lg text-foreground">
-            Nome do investigador
-          </label>
-          <Input
-            id="character-name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Digite seu nome"
-            maxLength={32}
-            autoFocus
-            className="mt-3 h-12 bg-card/60 text-base"
-          />
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          {INVESTIGATORS.map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              onClick={() => setSelected(item.value)}
+              className={`panel p-6 text-left transition-all hover:border-primary ${selected === item.value ? "border-primary bg-primary/10" : ""}`}
+            >
+              <p className="text-[10px] uppercase tracking-[0.25em] text-primary">{item.role}</p>
+              <h2 className="mt-2 text-3xl text-foreground">{item.name}</h2>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+              <p className="mt-5 border-l-2 border-primary/50 pl-4 text-sm italic text-muted-foreground">“{item.quote}”</p>
+            </button>
+          ))}
         </div>
 
-        <fieldset className="mt-7">
-          <legend className="text-display text-lg">Forma de tratamento</legend>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {PRONOUNS.map((value) => (
-              <Button
-                key={value}
-                type="button"
-                variant={pronouns === value ? "default" : "outline"}
-                onClick={() => setPronouns(value)}
-              >
-                {value}
-              </Button>
-            ))}
+        {selected && (
+          <div className="panel mt-6 p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-primary">Escolha registrada</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {INVESTIGATORS.find((item) => item.value === selected)?.name} conduzirá este caso.
+              O outro investigador continuará sendo seu parceiro nos bastidores.
+            </p>
           </div>
-        </fieldset>
+        )}
 
-        <fieldset className="mt-8">
-          <legend className="text-display text-lg">Especialidade</legend>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            {SPECIALTIES.map((option) => (
-              <Button
-                key={option.value}
-                type="button"
-                variant="outline"
-                onClick={() => setSpecialty(option.value)}
-                className={`h-auto min-h-24 whitespace-normal px-4 py-4 text-left ${
-                  specialty === option.value ? "border-primary bg-primary/10" : ""
-                }`}
-              >
-                <span>
-                  <strong className="text-display block text-base text-foreground">{option.value}</strong>
-                  <span className="mt-1 block text-xs font-normal leading-relaxed text-muted-foreground">
-                    {option.description}
-                  </span>
-                </span>
-              </Button>
-            ))}
-          </div>
-        </fieldset>
-
-        <Button type="submit" size="lg" disabled={!name.trim()} className="mt-10 w-full sm:w-auto">
-          Entrar em VEILORIS
+        <Button type="submit" size="lg" disabled={!selected} className="mt-8 w-full sm:w-auto">
+          Começar investigação
         </Button>
       </form>
     </main>
