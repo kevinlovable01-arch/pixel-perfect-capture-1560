@@ -424,9 +424,9 @@ function Case02Debate({
   }
 
   if (step === "connection") {
-    return <Case02DebateTurn speaker="Samuel Crowe" line={evidence >= keyEvidenceCount ? "A chave, a cera, a lista e a identidade falsa formam uma sequência. Falta decidir quem essa sequência realmente aponta." : "Ainda faltam peças. Se confundirmos uma hipótese com uma prova, podemos acusar a pessoa errada."} options={[
-      { label: evidence >= keyEvidenceCount ? "Cruzar acesso, horários e a identidade falsa." : "Escolher a pessoa mais suspeita e adaptar as pistas a ela.", correct: evidence >= keyEvidenceCount },
-      { label: "Escolher quem tinha o maior motivo financeiro.", correct: false },
+    return <Case02DebateTurn speaker="Samuel Crowe" line={evidence >= keyEvidenceCount ? "A chave, a cera, a lista e a identidade falsa formam uma sequência. Falta decidir quem essa sequência realmente aponta." : "Eu trouxe as peças que você não encontrou. Agora temos a sequência completa — mas ainda precisamos interpretá-la sem forçar uma hipótese."} options={[
+      { label: "Cruzar acesso, horários e a identidade falsa.", correct: true },
+      { label: "Escolher a pessoa mais suspeita e adaptar as pistas a ela.", correct: false },
     ]} onChoose={choose} />;
   }
 
