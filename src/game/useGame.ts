@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import type { Difficulty } from "./difficulty";
 
 export type Screen = "title" | "character" | "briefing" | "hub" | "verdict";
 
@@ -11,6 +12,7 @@ export type PlayerCharacter = {
 export type GameState = {
   started: boolean;
   screen: Screen;
+  difficulty: Difficulty;
   clues: string[];
   asked: string[];
   notes: string[];
@@ -23,6 +25,7 @@ const STORAGE_KEY = "ultimo-temporal-save-v1";
 const initialState: GameState = {
   started: false,
   screen: "title",
+  difficulty: "media",
   clues: [],
   asked: [],
   notes: [],
@@ -35,6 +38,7 @@ function restoreState(raw: string): GameState {
   return {
     ...initialState,
     ...saved,
+    difficulty: saved.difficulty === "facil" || saved.difficulty === "media" || saved.difficulty === "dificil" ? saved.difficulty : "media",
     clues: Array.isArray(saved.clues) ? saved.clues : [],
     asked: Array.isArray(saved.asked) ? saved.asked : [],
     notes: Array.isArray(saved.notes) ? saved.notes : [],
@@ -117,7 +121,12 @@ export function useGame() {
   }, []);
 
   function setCharacter(character: PlayerCharacter) {
-    setState((s) => ({ ...s, started: true, character, screen: "briefing" }));
+    setState((s) => ({ ...s, started: true, character, screen: "difficulty" }));
+    setHasSave(true);
+  }
+
+  function setDifficulty(difficulty: Difficulty) {
+    setState((s) => ({ ...s, started: true, difficulty }));
     setHasSave(true);
   }
 
@@ -139,6 +148,7 @@ export function useGame() {
     addNote,
     accuse,
     setCharacter,
+    setDifficulty,
     has,
     hasAll,
   };
