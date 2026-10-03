@@ -35,7 +35,7 @@ function firstSentence(text: string) {
 
 function firstClause(text: string) {
   const parts = text.split(/[,;:]/);
-  return parts[0].trim() + (parts.length > 1 ? "." : "");
+  return (parts[0] ?? "").trim() + (parts.length > 1 ? "." : "");
 }
 
 /**

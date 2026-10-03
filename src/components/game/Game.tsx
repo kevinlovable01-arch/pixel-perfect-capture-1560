@@ -63,7 +63,7 @@ export function Game() {
     return <Verdict game={game} />;
   }
 
-  return <Hub game={game} />;
+  return <Hub game={game} onMenu={() => setSelectedCase(0)} />;
 }
 
 /* ---------------------------------------------------------------- título */
@@ -306,7 +306,7 @@ function Dialogue({ who, line }: { who: "adrian" | "samuel"; line: string }) {
 
 type GameApi = ReturnType<typeof useGame>;
 
-function Hub({ game }: { game: GameApi }) {
+function Hub({ game, onMenu }: { game: GameApi; onMenu?: () => void }) {
   const [tab, setTab] = useState<Tab>("investigar");
   const [location, setLocation] = useState<Location | null>(null);
   const [suspect, setSuspect] = useState<Suspect | null>(null);
@@ -345,7 +345,7 @@ function Hub({ game }: { game: GameApi }) {
         </div>
         <button
           className="text-xs text-muted-foreground underline underline-offset-4"
-          onClick={() => { setSelectedCase(0); game.go("title"); }}
+          onClick={() => { onMenu?.(); game.go("title"); }}
         >
           Menu
         </button>
@@ -536,7 +536,7 @@ function LocationView({
                 Ainda não há contexto suficiente para interpretar este detalhe.
               </p>
             ) : selectedClue ? (
-              <ClueCard id={selectedClue} game={game} />
+              <ClueCard id={selectedClue.id} game={game} />
             ) : (
               <div className="mt-4 border-t border-border/60 pt-4">
                 <p className="text-sm text-muted-foreground">
