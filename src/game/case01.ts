@@ -28,6 +28,8 @@ export type Clue = {
 /** Ponto clicável dentro da ilustração de um local (coordenadas em %). */
 export type Spot = {
   id: string;
+  /** Detalhes especialmente perceptíveis pelo investigador de campo. */
+  specialty?: "Observação" | "Persuasão";
   label: string;
   x: number;
   y: number;
@@ -52,6 +54,8 @@ export type Location = {
 
 export type Question = {
   id: string;
+  /** Especialidade necessária para acessar uma pergunta de abordagem especializada. */
+  specialty?: "Observação" | "Persuasão";
   q: string;
   a: string;
   asker?: "player" | "adrian" | "samuel";
@@ -78,6 +82,12 @@ export type Suspect = {
 };
 
 export type CrewMember = { name: string; role: string; knownBy?: string };
+
+export const WORLD = {
+  title: "Os Dois",
+  description:
+    "Adrian Vale e Samuel Crowe se conhecem desde a infância. Hoje trabalham longe dos olhos das autoridades, ajudando pessoas poderosas a resolver problemas que não podem aparecer nos registros oficiais. Tripulações, organizações, círculos fechados e até seitas podem se tornar seus clientes.",
+};
 
 export const CASE = {
   code: "CASO 01",
