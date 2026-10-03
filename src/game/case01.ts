@@ -35,8 +35,6 @@ export type Spot = {
   gives?: string;
   flavor?: string;
   requires?: string[];
-  /** Perguntas anteriores que precisam ter sido feitas para abrir este caminho. */
-  requiresQuestions?: string[];
 };
 
 export type Location = {
@@ -61,6 +59,8 @@ export type Question = {
   aside?: { who: "adrian" | "samuel"; line: string };
   gives?: string;
   requires?: string[];
+  /** Perguntas anteriores que precisam ter sido feitas para abrir este caminho. */
+  requiresQuestions?: string[];
 };
 
 export type Suspect = {
