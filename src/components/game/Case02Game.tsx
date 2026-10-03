@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import {
   CASE,
   CLUES,
@@ -373,7 +373,7 @@ function Case02Debate({
   score: number;
   choice: string | null;
   setStep: (step: "arrival" | "evidence" | "connection" | "candidates") => void;
-  setScore: React.Dispatch<React.SetStateAction<number>>;
+  setScore: Dispatch<SetStateAction<number>>;
   setChoice: (choice: string | null) => void;
   onFinish: () => void;
 }) {
