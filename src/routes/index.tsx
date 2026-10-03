@@ -2,14 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Game } from "@/components/game/Game";
 
 function GameWithPhase2Banner() {
-  return (
-    <>
-      <div className="fixed top-0 left-0 right-0 z-50 bg-black/90 text-white text-center py-2 text-sm">
-        🚀 Fase 2 em desenvolvimento — Coming Soon
-      </div>
-      <Game />
-    </>
-  );
+  return <Game />;
 }
 
 export const Route = createFileRoute("/")({
