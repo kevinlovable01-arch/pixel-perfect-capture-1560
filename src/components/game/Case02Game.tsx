@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
-export function Case02Game({ onBack }: { onBack: () => void }) {
+export function Case02Game({ character, onBack }: { character: PlayerCharacter | null; onBack: () => void }) {
   const [tab, setTab] = useState<Tab>("investigar");
   const [clues, setClues] = useState<string[]>([]);
   const [location, setLocation] = useState<(typeof LOCATIONS)[number] | null>(null);
@@ -172,7 +172,8 @@ export function Case02Game({ onBack }: { onBack: () => void }) {
                         const used = asked.includes(key);
                         const clueReady = !q.requires?.some((r) => !has(r));
                         const questionReady = (q.requiresQuestions ?? []).every((id) => asked.includes(suspect.id + ":" + id));
-                        return !used && clueReady && questionReady;
+                        const specialtyReady = !q.specialty || q.specialty === character?.specialty;
+                        return !used && clueReady && questionReady && specialtyReady;
                       }).map((q, index) => (
                         <button key={q.id} onClick={() => { setAsked((v) => [...v, suspect.id + ":" + q.id]); add(q.gives); }}
                           className="group rounded-sm border border-border bg-card px-4 py-3 text-left text-sm transition-all hover:border-primary hover:bg-primary/5">
