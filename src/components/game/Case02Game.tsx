@@ -95,7 +95,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
         </div>
         <div className="mt-8 flex gap-3">
           <Button onClick={onBack}>Voltar aos casos</Button>
-          <Button variant="outline" onClick={() => { setFinished(false); setChoice(null); }}>Revisar investigação</Button>
+          <Button variant="outline" onClick={() => { setFinished(false); setChoice(null); setDebateStep("arrival"); setDebateScore(0); }}>Revisar investigação</Button>
         </div>
       </main>
     );
@@ -424,7 +424,7 @@ function Case02Debate({
   }
 
   if (step === "connection") {
-    return <Case02DebateTurn speaker="Samuel Crowe" line={evidence >= keyEvidenceCount ? "A chave, a cera, a lista e a identidade falsa formam uma sequência. Falta decidir quem essa sequência realmente aponta." : "Eu trouxe as peças que você não encontrou. Agora temos a sequência completa — mas ainda precisamos interpretá-la sem forçar uma hipótese."} options={[
+    return <Case02DebateTurn speaker={character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"} line={evidence >= keyEvidenceCount} ? "A chave, a cera, a lista e a identidade falsa formam uma sequência. Falta decidir quem essa sequência realmente aponta." : "Eu trouxe as peças que você não encontrou. Agora temos a sequência completa — mas ainda precisamos interpretá-la sem forçar uma hipótese."} options={[
       { label: "Cruzar acesso, horários e a identidade falsa.", correct: true },
       { label: "Escolher a pessoa mais suspeita e adaptar as pistas a ela.", correct: false },
     ]} onChoose={choose} />;
