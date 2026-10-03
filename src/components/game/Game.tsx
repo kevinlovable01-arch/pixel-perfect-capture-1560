@@ -993,45 +993,53 @@ function Conclusion({ game }: { game: GameApi }) {
 }
 
 function DebateCharacters({ speaker }: { speaker: "Adrian Vale" | "Samuel Crowe" | null }) {
+  const active = (name: "Adrian Vale" | "Samuel Crowe") => {
+    if (!speaker) return "";
+    return speaker === name ? "z-20 scale-[1.035] brightness-110" : "z-10 scale-[0.97] brightness-[0.82]";
+  };
+
   return (
-    <div
-      className="relative mx-auto h-[390px] max-w-4xl overflow-hidden"
-      style={{ perspective: "1200px" }}
-    >
+    <div className="relative mx-auto h-[430px] w-full max-w-5xl overflow-visible" style={{ perspective: "1200px" }}>
       <style>{`
-        @keyframes veiloris-debate-breathe {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-2px) scale(1.004); }
+        @keyframes veiloris-adrian-breathe {
+          0%,100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-3px) scale(1.006); }
         }
-        @keyframes veiloris-debate-breathe-reverse {
-          0%, 100% { transform: translateY(-1px) scale(1); }
-          50% { transform: translateY(-3px) scale(1.004); }
+        @keyframes veiloris-samuel-breathe {
+          0%,100% { transform: translateY(-1px) scale(1); }
+          50% { transform: translateY(-4px) scale(1.006); }
         }
       `}</style>
 
       <div
-        className={`absolute bottom-[62px] left-[1%] w-[47%] max-w-[350px] origin-bottom transition-all duration-500 ${speaker === "Adrian Vale" ? "-translate-y-2 scale-[1.025] brightness-110" : "brightness-[.92]"}`}
+        className={`absolute bottom-0 left-[4%] h-[410px] w-[44%] overflow-visible origin-bottom transition-all duration-500 ${active("Adrian Vale")}`}
         style={{
-          filter: "drop-shadow(0 14px 14px rgba(0,0,0,.65)) saturate(.9) contrast(1.03)",
-          animation: "veiloris-debate-breathe 4.6s ease-in-out infinite",
-          clipPath: "inset(0 0 35% 0)",
+          filter: "drop-shadow(0 18px 18px rgba(0,0,0,.72)) saturate(.96) contrast(1.04)",
+          animation: "veiloris-adrian-breathe 4.8s ease-in-out infinite",
         }}
       >
-        <img src={adrianFullBody} alt="Adrian Vale" className="block w-full h-auto object-contain object-bottom" />
+        <img
+          src={adrianFullBody}
+          alt="Adrian Vale"
+          className="h-full w-full object-contain object-bottom"
+        />
       </div>
 
       <div
-        className={`absolute bottom-[62px] right-[1%] w-[47%] max-w-[350px] origin-bottom transition-all duration-500 ${speaker === "Samuel Crowe" ? "-translate-y-2 scale-[1.025] brightness-110" : "brightness-[.92]"}`}
+        className={`absolute bottom-0 right-[4%] h-[410px] w-[44%] overflow-visible origin-bottom transition-all duration-500 ${active("Samuel Crowe")}`}
         style={{
-          filter: "drop-shadow(0 14px 14px rgba(0,0,0,.65)) saturate(.9) contrast(1.03)",
-          animation: "veiloris-debate-breathe-reverse 5.1s ease-in-out infinite",
-          clipPath: "inset(0 0 35% 0)",
+          filter: "drop-shadow(0 18px 18px rgba(0,0,0,.72)) saturate(.96) contrast(1.04)",
+          animation: "veiloris-samuel-breathe 5.2s ease-in-out infinite",
         }}
       >
-        <img src={samuelFullBody} alt="Samuel Crowe" className="block w-full h-auto object-contain object-bottom" />
+        <img
+          src={samuelFullBody}
+          alt="Samuel Crowe"
+          className="h-full w-full object-contain object-bottom"
+        />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-[8%] bottom-5 h-8 rounded-[50%] bg-black/45 blur-xl" />
+      <div className="pointer-events-none absolute inset-x-[12%] bottom-0 h-10 rounded-[50%] bg-black/55 blur-xl" />
     </div>
   );
 }
