@@ -53,6 +53,7 @@ export function Game() {
           game.go("character");
         }}
         onResume={() => {
+          setSelectedCase(1);
           setShowCaseSelection(false);
           game.resume();
         }}
@@ -66,6 +67,7 @@ export function Game() {
         hasSave={game.hasSave}
         onPlay={() => setShowCaseSelection(true)}
         onResume={() => {
+          setSelectedCase(1);
           setShowCaseSelection(false);
           game.resume();
         }}
