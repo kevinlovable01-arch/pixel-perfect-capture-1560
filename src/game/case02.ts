@@ -133,6 +133,7 @@ export const SUSPECTS: Suspect[] = [
       { id: "q3b", specialty: "Persuasão", q: "Você pagou alguém para pegar a original?", requiresQuestions: ["q3a"], a: "Não. Paguei pela cópia que deveria receber depois.", gives: "c2_pagamento" }
     
 ],
+    notes: [],
   },
   {
     id: "c2_helena",
@@ -153,6 +154,7 @@ export const SUSPECTS: Suspect[] = [
       { id: "q3b", specialty: "Persuasão", q: "Você sabia quem estava na fotografia?", requiresQuestions: ["q3a"], a: "Não. E não vou inventar uma resposta para uma acusação.", tell: "A hipótese não ganha sustentação." }
     
 ],
+    notes: [],
   },
   {
     id: "c2_miriam",
