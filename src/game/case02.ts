@@ -127,6 +127,7 @@ export const SUSPECTS: Suspect[] = [
       { id: "q2", q: "Onde você estava quando Augusto foi atacado?", a: "No salão, falando com os convidados.", tell: "Ele responde sem citar uma testemunha." },
       { id: "q3", q: "Você queria a fotografia original para você?", a: "Eu queria uma cópia. A original não me interessava.", tell: "A pergunta parece acusatória, mas abre uma linha plausível sobre dinheiro." },
       { id: "q1a", specialty: "Observação", q: "Por que a fotografia era tão importante para seu cliente?", requiresQuestions: ["q1"], a: "Havia alguém importante nela. Eu não sabia exatamente quem.", gives: "c2_pagamento" },
+      { id: "q1b", q: "Por que você precisava encontrar essa fotografia?", requiresQuestions: ["q1"], a: "Porque eu precisava encontrar a prova antes que alguém a usasse contra mim.", gives: "c2_elisa" },
       { id: "q2a", q: "Quem pode confirmar que você estava no salão?", requiresQuestions: ["q2"], a: "Pergunte aos outros. Eu estava circulando.", tell: "O álibi permanece vago." },
       { id: "q3a", q: "Então você tinha motivo para roubar a fotografia.", requiresQuestions: ["q3"], a: "Motivo para comprar uma cópia, não para atacar Augusto.", tell: "O ramo parece incriminador, mas ainda não explica o ataque." },
       { id: "q3b", specialty: "Persuasão", q: "Você pagou alguém para pegar a original?", requiresQuestions: ["q3a"], a: "Não. Paguei pela cópia que deveria receber depois.", gives: "c2_pagamento" }
