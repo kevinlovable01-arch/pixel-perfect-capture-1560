@@ -124,7 +124,7 @@ export const SUSPECTS: Suspect[] = [
     notes: [{ requires: "c2_marcus", label: "Negociação", text: "Queria vender uma cópia da fotografia." }, { requires: "c2_pagamento", label: "Dinheiro", text: "Recebeu pagamento por uma entrega." }],
     questions: [
       { id: "q1", q: "Por que discutiu com Augusto?", a: "Ele se recusou a vender a fotografia para o meu cliente.", gives: "c2_marcus" },
-      { id: "q2", q: "Recebeu dinheiro pela fotografia?", a: "Recebi. Mas era pela cópia. Eu não toquei na original.", gives: "c2_pagamento", requires: ["c2_marcus"] },
+      { id: "q2", q: "Recebeu dinheiro pela fotografia?", requiresQuestions: ["q1"], a: "Recebi. Mas era pela cópia. Eu não toquei na original.", gives: "c2_pagamento", requires: ["c2_marcus"] },
     ],
   },
   {
@@ -138,7 +138,7 @@ export const SUSPECTS: Suspect[] = [
     reason: "Seu álibi depende de um diário com um intervalo sem registros.",
     questions: [
       { id: "q1", q: "Você saiu da navegação?", a: "Não durante o horário do ataque.", gives: "c2_helena" },
-      { id: "q2", q: "O que aconteceu durante os onze minutos?", a: "O navio mudou de direção e eu precisei resolver uma correção manual.", gives: "c2_rota", requires: ["c2_helena"] },
+      { id: "q2", q: "O que aconteceu durante os onze minutos?", requiresQuestions: ["q1"], a: "O navio mudou de direção e eu precisei resolver uma correção manual.", gives: "c2_rota", requires: ["c2_helena"] },
     ],
   },
   {
@@ -152,7 +152,7 @@ export const SUSPECTS: Suspect[] = [
     reason: "Somente ela controla o livro de chaves.",
     questions: [
       { id: "q1", q: "Quem retirou a chave duplicada?", a: "Não vi o rosto. Registrei a retirada às 21:18.", gives: "c2_miriam" },
-      { id: "q2", q: "Quem foi acrescentado à lista?", a: "Elisa Voss. O nome apareceu depois do início da recepção.", gives: "c2_nome", requires: ["c2_lista"] },
+      { id: "q2", q: "Quem foi acrescentado à lista?", requiresQuestions: ["q1"], a: "Elisa Voss. O nome apareceu depois do início da recepção.", gives: "c2_nome", requires: ["c2_lista"] },
     ],
   },
   {
@@ -168,7 +168,7 @@ export const SUSPECTS: Suspect[] = [
     notes: [{ requires: "c2_elisa", label: "Identidade", text: "Embarcou usando outro nome." }, { requires: "c2_culpa", label: "O ataque", text: "Retirou a fotografia, mas não atacou Augusto." }],
     questions: [
       { id: "q1", q: "Quem é você?", a: "Elisa Voss. O nome usado no embarque não era meu.", gives: "c2_elisa" },
-      { id: "q2", q: "Você pegou a fotografia?", a: "Sim. Eu precisava dela. Mas quando cheguei, Augusto já estava caído. Eu não o ataquei.", gives: "c2_culpa", requires: ["c2_elisa"] },
+      { id: "q2", q: "Você pegou a fotografia?", requiresQuestions: ["q1"], a: "Sim. Eu precisava dela. Mas quando cheguei, Augusto já estava caído. Eu não o ataquei.", gives: "c2_culpa", requires: ["c2_elisa"] },
     ],
   },
 ];
