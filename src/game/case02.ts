@@ -123,9 +123,15 @@ export const SUSPECTS: Suspect[] = [
     reason: "Tinha interesse financeiro direto na fotografia.",
     notes: [{ requires: "c2_marcus", label: "Negociação", text: "Queria vender uma cópia da fotografia." }, { requires: "c2_pagamento", label: "Dinheiro", text: "Recebeu pagamento por uma entrega." }],
     questions: [
-      { id: "q1", q: "Por que discutiu com Augusto?", a: "Ele se recusou a vender a fotografia para o meu cliente.", gives: "c2_marcus" },
-      { id: "q2", q: "Recebeu dinheiro pela fotografia?", requiresQuestions: ["q1"], a: "Recebi. Mas era pela cópia. Eu não toquei na original.", gives: "c2_pagamento", requires: ["c2_marcus"] },
-    ],
+      { id: "q1", q: "Por que discutiu com Augusto?", a: "Ele se recusou a vender a fotografia ao meu cliente.", gives: "c2_marcus" },
+      { id: "q2", q: "Onde você estava quando Augusto foi atacado?", a: "No salão, falando com os convidados.", tell: "Ele responde sem citar uma testemunha." },
+      { id: "q3", q: "Você queria a fotografia original para você?", a: "Eu queria uma cópia. A original não me interessava.", tell: "A pergunta parece acusatória, mas abre uma linha plausível sobre dinheiro." },
+      { id: "q1a", q: "Por que a fotografia era tão importante para seu cliente?", requiresQuestions: ["q1"], a: "Havia alguém importante nela. Eu não sabia exatamente quem.", gives: "c2_pagamento" },
+      { id: "q2a", q: "Quem pode confirmar que você estava no salão?", requiresQuestions: ["q2"], a: "Pergunte aos outros. Eu estava circulando.", tell: "O álibi permanece vago." },
+      { id: "q3a", q: "Então você tinha motivo para roubar a fotografia.", requiresQuestions: ["q3"], a: "Motivo para comprar uma cópia, não para atacar Augusto.", tell: "O ramo parece incriminador, mas ainda não explica o ataque." },
+      { id: "q3b", q: "Você pagou alguém para pegar a original?", requiresQuestions: ["q3a"], a: "Não. Paguei pela cópia que deveria receber depois.", gives: "c2_pagamento" }
+    
+],
   },
   {
     id: "c2_helena",
@@ -137,9 +143,15 @@ export const SUSPECTS: Suspect[] = [
     interrogateBy: "c2_helena",
     reason: "Seu álibi depende de um diário com um intervalo sem registros.",
     questions: [
-      { id: "q1", q: "Você saiu da navegação?", a: "Não durante o horário do ataque.", gives: "c2_helena" },
-      { id: "q2", q: "O que aconteceu durante os onze minutos?", requiresQuestions: ["q1"], a: "O navio mudou de direção e eu precisei resolver uma correção manual.", gives: "c2_rota", requires: ["c2_helena"] },
-    ],
+      { id: "q1", q: "Você saiu da sala de navegação?", a: "Não durante o horário do ataque.", gives: "c2_helena" },
+      { id: "q2", q: "O que aconteceu durante os onze minutos sem registro?", a: "Uma correção de rota. Eu estava ocupada com o leme e não atualizei o diário.", tell: "Ela oferece uma explicação antes de ser pressionada." },
+      { id: "q3", q: "Você sabia que Augusto guardava uma fotografia importante?", a: "Sabia que ele colecionava fotografias. Não sabia daquela.", tell: "A pergunta tenta ligar Helena à fotografia sem prova." },
+      { id: "q1a", q: "Alguém confirma que você ficou na navegação?", requiresQuestions: ["q1"], a: "O diário deveria confirmar, mas justamente há um intervalo.", tell: "O álibi depende de um registro incompleto." },
+      { id: "q2a", q: "Você saiu para algum lugar durante os onze minutos?", requiresQuestions: ["q2"], a: "Não. A rota exigia minha atenção.", gives: "c2_rota" },
+      { id: "q3a", q: "Então você tinha uma razão para entrar na cabine.", requiresQuestions: ["q3"], a: "Não. Você está construindo uma razão a partir de uma pergunta.", tell: "O caminho da suspeita começa a se alimentar de sua própria hipótese." },
+      { id: "q3b", q: "Você sabia quem estava na fotografia?", requiresQuestions: ["q3a"], a: "Não. E não vou inventar uma resposta para uma acusação.", tell: "A hipótese não ganha sustentação." }
+    
+],
   },
   {
     id: "c2_miriam",
@@ -152,8 +164,14 @@ export const SUSPECTS: Suspect[] = [
     reason: "Somente ela controla o livro de chaves.",
     questions: [
       { id: "q1", q: "Quem retirou a chave duplicada?", a: "Não vi o rosto. Registrei a retirada às 21:18.", gives: "c2_miriam" },
-      { id: "q2", q: "Quem foi acrescentado à lista?", requiresQuestions: ["q1"], a: "Elisa Voss. O nome apareceu depois do início da recepção.", gives: "c2_nome", requires: ["c2_lista"] },
-    ],
+      { id: "q2", q: "Quem alterou a lista de convidados?", a: "A alteração foi feita à mão. Eu estava atendendo outras pessoas.", tell: "Ela não assume nem nega ter visto." },
+      { id: "q3", q: "Você poderia ter retirado a chave e escondido isso?", a: "Poderia. Sou responsável pelos registros. Mas registrei a retirada.", tell: "A pergunta coloca Miriam sob suspeita por causa do próprio cargo." },
+      { id: "q1a", q: "Por que a chave foi devolvida às 21:31?", requiresQuestions: ["q1"], a: "Porque quem a pegou não precisava mais dela.", tell: "Ela escolhe as palavras com cuidado." },
+      { id: "q2a", q: "Você viu Elisa antes da lista ser alterada?", requiresQuestions: ["q2"], a: "Não tenho certeza. Havia muita gente.", gives: "c2_nome", requires: ["c2_lista"] },
+      { id: "q3a", q: "Então você pode ser a pessoa que entrou na cabine.", requiresQuestions: ["q3"], a: "Posso ser qualquer pessoa na sua hipótese. O livro ainda registra quem retirou a chave.", tell: "A suspeita não resolve a questão central: quem usou a chave?" },
+      { id: "q3b", q: "Você está protegendo quem retirou a chave?", requiresQuestions: ["q3a"], a: "Estou protegendo a integridade do registro. É o meu trabalho.", tell: "O ramo contra Miriam começa a perder força." }
+    
+],
   },
   {
     id: "c2_elisa",
@@ -168,8 +186,14 @@ export const SUSPECTS: Suspect[] = [
     notes: [{ requires: "c2_elisa", label: "Identidade", text: "Embarcou usando outro nome." }, { requires: "c2_culpa", label: "O ataque", text: "Retirou a fotografia, mas não atacou Augusto." }],
     questions: [
       { id: "q1", q: "Quem é você?", a: "Elisa Voss. O nome usado no embarque não era meu.", gives: "c2_elisa" },
-      { id: "q2", q: "Você pegou a fotografia?", requiresQuestions: ["q1"], a: "Sim. Eu precisava dela. Mas quando cheguei, Augusto já estava caído. Eu não o ataquei.", gives: "c2_culpa", requires: ["c2_elisa"] },
-    ],
+      { id: "q2", q: "Onde você estava quando Augusto foi atacado?", a: "Eu estava procurando uma fotografia.", tell: "Ela evita responder onde estava antes de dizer por quê." },
+      { id: "q3", q: "Você atacou Augusto para conseguir a fotografia?", a: "Não.", tell: "A pergunta parece direta, mas parte de uma acusação ainda não comprovada." },
+      { id: "q1a", q: "Por que embarcou usando outro nome?", requiresQuestions: ["q1"], a: "Porque a fotografia mostra meu pai em uma operação ilegal. Eu precisava encontrá-la antes que alguém a usasse contra mim." },
+      { id: "q2a", q: "Você chegou à cabine antes ou depois do ataque?", requiresQuestions: ["q2"], a: "Depois. Augusto já estava no chão.", gives: "c2_culpa" },
+      { id: "q3a", q: "Se não atacou Augusto, por que a fotografia estava com você?", requiresQuestions: ["q3"], a: "Porque eu a retirei. Não porque eu o golpeei.", gives: "c2_culpa" },
+      { id: "q3b", q: "Então você admite ter roubado a fotografia.", requiresQuestions: ["q3a"], a: "Sim. E isso não transforma meu roubo em ataque.", tell: "O interrogatório separa duas ações que pareciam ser uma só." }
+    
+],
   },
 ];
 
