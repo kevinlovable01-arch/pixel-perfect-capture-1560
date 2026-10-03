@@ -20,6 +20,7 @@ import { DIFFICULTIES, answerForDifficulty, shouldShowInvestigationSpot, type Di
 import coverAsset from "@/assets/veiloris-cover.png.asset.json";
 import adrianDebate from "@/assets/adrian-debate.svg";
 import samuelDebate from "@/assets/samuel-debate.svg";
+import samuelFullBody from "@/assets/samuel-crowe-fullbody.webp";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
@@ -207,6 +208,15 @@ function CharacterCreation({
               onClick={() => setSelected(item.value)}
               className={`panel p-6 text-left transition-all hover:border-primary ${selected === item.value ? "border-primary bg-primary/10" : ""}`}
             >
+              {item.value === "Observação" && (
+                <div className="mb-5 flex h-64 items-end justify-center overflow-hidden rounded-sm border border-white/10 bg-black/20">
+                  <img
+                    src={samuelFullBody}
+                    alt="Samuel Crowe — rastreador de pistas"
+                    className="h-full w-auto object-contain object-bottom drop-shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                </div>
+              )}
               <p className="text-[10px] uppercase tracking-[0.25em] text-primary">{item.role}</p>
               <h2 className="mt-2 text-3xl text-foreground">{item.name}</h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
