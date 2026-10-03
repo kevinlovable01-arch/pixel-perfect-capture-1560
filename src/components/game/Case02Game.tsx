@@ -150,7 +150,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
                   if (!shouldShowInvestigationSpot(spot.id, index, difficulty)) return null;
                   const locked = !spot.requires || spot.requires.every((id) => clues.includes(id));
                   const done = !!spot.gives && has(spot.gives);
-                  const radius = spot.radius ?? 9;
+                  const radius = spot.radius ?? 5;
                   return (
                     <button
                       key={spot.id}
