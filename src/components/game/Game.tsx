@@ -18,6 +18,8 @@ import { Case02Game } from "@/components/game/Case02Game";
 import { Input } from "@/components/ui/input";
 import { DIFFICULTIES, answerForDifficulty, shouldShowInvestigationSpot, type Difficulty } from "@/game/difficulty";
 import coverAsset from "@/assets/veiloris-cover.png.asset.json";
+import adrianDebate from "@/assets/adrian-debate.svg";
+import samuelDebate from "@/assets/samuel-debate.svg";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
@@ -870,9 +872,15 @@ function Conclusion({ game }: { game: GameApi }) {
   const [step, setStep] = useState<DebateStep>("arrival");
   const [debateScore, setDebateScore] = useState(0);
   const [choice, setChoice] = useState<string | null>(null);
+  const [debateSceneId, setDebateSceneId] = useState<string | null>(null);
+
   const evidence = KEY_EVIDENCE.filter((id) => game.has(id));
   const completeEvidence = evidence.length === KEY_EVIDENCE.length;
-  const scene = LOCATIONS.find((l) => l.id === "registros") ?? LOCATIONS[0]!;
+  const debateSceneIds = ["conves", "registros", "ignicao", "porao", "cozinha", "navegacao"];
+  const debateScenes = debateSceneIds
+    .map((id) => LOCATIONS.find((location) => location.id === id))
+    .filter(Boolean) as Location[];
+  const scene = debateScenes.find((location) => location.id === debateSceneId) ?? debateScenes[0] ?? LOCATIONS[0]!;
 
   const advance = (correct: boolean) => {
     if (correct) setDebateScore((score) => score + 1);
@@ -885,28 +893,43 @@ function Conclusion({ game }: { game: GameApi }) {
     return (
       <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFade .45s ease-out both" }}>
         <style>{`@keyframes veilFade { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: scale(1); } }`}</style>
-        <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-background" />
-        <div className="relative flex min-h-[680px] flex-col justify-end p-5 sm:p-8">
-          <div className="mx-auto w-full max-w-3xl text-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-black" />
+        <div className="relative flex min-h-[680px] flex-col p-5 sm:p-8">
+          <div className="mx-auto w-full max-w-4xl">
             <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Conselho dos dois</p>
-            <h2 className="mt-2 text-3xl text-white sm:text-4xl">Agora, os dois sentam à mesa.</h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/70">
-              A investigação de campo termina aqui. O parceiro traz o que descobriu na outra frente,
-              e vocês precisam separar fato, interpretação e hipótese antes de citar dois nomes.
+            <h2 className="mt-2 text-3xl sm:text-4xl">Onde vocês vão juntar as peças?</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Adrian e Samuel deixam o resto da tripulação para trás. Você escolhe o lugar onde a conversa acontece.
+              O cenário não muda as provas — muda a atmosfera em que vocês vão reconstruir o caso.
             </p>
-            <div className="mx-auto mt-10 flex max-w-xl items-end justify-center gap-4">
-              <div className="flex h-44 w-32 flex-col items-center justify-end rounded-t-full border border-primary/30 bg-black/45 p-3">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-2xl text-primary">AV</div>
-                <div className="mt-2 h-7 w-20 rounded-t-full bg-black/80" />
-              </div>
-              <div className="mb-4 h-14 w-48 rounded-[50%] border border-primary/30 bg-black/60 shadow-2xl" />
-              <div className="flex h-44 w-32 flex-col items-center justify-end rounded-t-full border border-primary/30 bg-black/45 p-3">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-2xl text-primary">SC</div>
-                <div className="mt-2 h-7 w-20 rounded-t-full bg-black/80" />
-              </div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {debateScenes.map((location) => (
+                <button
+                  key={location.id}
+                  type="button"
+                  onClick={() => setDebateSceneId(location.id)}
+                  className={`group overflow-hidden rounded-sm border text-left transition-all ${debateSceneId === location.id ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/60"}`}
+                >
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <img src={location.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                    <p className="absolute bottom-3 left-3 text-sm font-medium text-white">{location.name}</p>
+                  </div>
+                  <p className="px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-primary">{location.subtitle}</p>
+                </button>
+              ))}
             </div>
-            <Button className="mt-8" size="lg" onClick={() => setStep("evidence")}>Sentar e começar a conversa</Button>
+
+            {debateSceneId && (
+              <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-primary">Local escolhido</p>
+                  <p className="mt-1 text-sm text-foreground">{scene.name}</p>
+                </div>
+                <Button size="lg" onClick={() => setStep("evidence")}>Entrar na cena e começar</Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -916,7 +939,8 @@ function Conclusion({ game }: { game: GameApi }) {
   if (step === "evidence") {
     const partnerHint = game.state.character?.specialty === "Observação"
       ? "Adrian coloca os depoimentos sobre a mesa. Ele lembra que algumas respostas pareciam convincentes, mas não explicavam o horário do confronto."
-      : "Samuel coloca suas anotações visuais sobre a mesa. Ele lembra que o rastro da tempestade não explica sozinho quem entrou na cabine.";
+      : "Samuel abre o caderno sobre a mesa. Ele lembra onde encontrou cada detalhe e quais marcas não combinavam com a história contada pela tripulação.";
+
     return (
       <DebateScene
         scene={scene}
@@ -937,7 +961,7 @@ function Conclusion({ game }: { game: GameApi }) {
         scene={scene}
         speaker={game.state.character?.specialty === "Observação" ? "Adrian Vale" : "Samuel Crowe"}
         line={completeEvidence
-          ? "Os horários, o acesso e a inconsistência nos registros formam uma sequência. Agora precisamos decidir qual conexão realmente fecha o caso."
+          ? "Os horários, o acesso e as inconsistências formam uma sequência. Agora precisamos decidir qual conexão realmente fecha o caso."
           : "Eu trouxe as peças que você não conseguiu ver. Agora precisamos separar a hipótese da conexão que realmente fecha o caso."}
         options={[
           { label: "Cruzar horários, acesso e as pistas decisivas.", correct: true },
@@ -959,25 +983,26 @@ function Conclusion({ game }: { game: GameApi }) {
   return (
     <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFade .45s ease-out both" }}>
       <style>{`@keyframes veilFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/60 to-background" />
+      <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-45" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-background" />
       <div className="relative flex min-h-[680px] flex-col p-5 sm:p-8">
-        <div className="mx-auto w-full max-w-3xl">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Os dois chegaram a uma mesa</p>
-          <h2 className="mt-2 text-3xl text-white">Dois nomes. Uma decisão.</h2>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">
-            O debate terminou. Agora vocês só podem levar dois nomes adiante. Um deles pode ser a resposta —
-            ou vocês podem ter construído uma conclusão errada.
-          </p>
+        <div className="mx-auto w-full max-w-4xl">
+          <DebateCharacters speaker={null} />
+          <div className="mt-2 rounded-sm border border-white/15 bg-black/75 p-5 backdrop-blur-sm">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-primary">Debate encerrado</p>
+            <h2 className="mt-2 text-3xl text-white">Dois nomes ficaram de pé.</h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">
+              Vocês podem estar certos. Também podem ter construído uma leitura errada.
+              O jogo não vai corrigir vocês antes da escolha.
+            </p>
+          </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {candidatePeople.map((s) => (
               <button
                 key={s.id}
                 onClick={() => setChoice(s.id)}
-                className={`rounded-sm border border-white/15 bg-black/55 p-5 text-left text-white transition-all hover:border-primary ${
-                  choice === s.id ? "border-primary bg-primary/10" : ""
-                }`}
+                className={`rounded-sm border border-white/15 bg-black/65 p-5 text-left text-white transition-all hover:border-primary ${choice === s.id ? "border-primary bg-primary/10" : ""}`}
               >
                 <p className="text-xs uppercase tracking-[0.2em] text-primary">{s.role}</p>
                 <h3 className="mt-1 text-xl">{s.name}</h3>
@@ -986,11 +1011,29 @@ function Conclusion({ game }: { game: GameApi }) {
             ))}
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
             <p className="text-xs text-white/50">Pistas decisivas: {evidence.length}/{KEY_EVIDENCE.length} · Debate consistente: {debateScore}/2</p>
             <Button size="lg" disabled={!choice} onClick={() => game.accuse(choice!)}>Escolher este nome</Button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function DebateCharacters({ speaker }: { speaker: "Adrian Vale" | "Samuel Crowe" | null }) {
+  return (
+    <div className="relative mx-auto h-[330px] max-w-4xl overflow-hidden rounded-sm border border-white/10 bg-black/35">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/70" />
+      <div className={`absolute bottom-[-22px] left-[4%] w-[42%] max-w-[330px] transition-transform duration-300 ${speaker === "Adrian Vale" ? "-translate-y-2" : ""}`}>
+        <img src={adrianDebate} alt="Adrian Vale" className="w-full drop-shadow-2xl" />
+      </div>
+      <div className={`absolute bottom-[-22px] right-[4%] w-[42%] max-w-[330px] transition-transform duration-300 ${speaker === "Samuel Crowe" ? "-translate-y-2" : ""}`}>
+        <img src={samuelDebate} alt="Samuel Crowe" className="w-full drop-shadow-2xl" />
+      </div>
+      <div className="absolute bottom-0 left-1/2 h-20 w-[58%] -translate-x-1/2 rounded-t-[50%] border border-white/15 bg-[#171717]/95 shadow-2xl" />
+      <div className="absolute left-1/2 top-4 -translate-x-1/2 rounded-full border border-primary/30 bg-black/55 px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-primary backdrop-blur-sm">
+        Adrian · Samuel
       </div>
     </div>
   );
@@ -1010,32 +1053,27 @@ function DebateScene({
   onChoose: (correct: boolean) => void;
 }) {
   return (
-    <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black">
-      <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/60 to-background" />
-      <div className="relative flex min-h-[680px] flex-col justify-end p-5 sm:p-8">
-        <div className="mx-auto w-full max-w-3xl">
-          <div className="mb-5 flex items-end justify-center gap-3">
-            <div className="h-24 w-20 rounded-t-full border border-primary/30 bg-black/55 p-2 text-center text-primary">
-              <div className="flex h-12 items-center justify-center rounded-full border border-primary/40 text-xs">AV</div>
-              <div className="mx-auto mt-2 h-5 w-12 rounded-t-full bg-black/80" />
-            </div>
-            <div className="h-10 w-44 rounded-[50%] border border-primary/30 bg-black/60" />
-            <div className="h-24 w-20 rounded-t-full border border-primary/30 bg-black/55 p-2 text-center text-primary">
-              <div className="flex h-12 items-center justify-center rounded-full border border-primary/40 text-xs">SC</div>
-              <div className="mx-auto mt-2 h-5 w-12 rounded-t-full bg-black/80" />
-            </div>
-          </div>
-          <div className="rounded-sm border border-white/15 bg-black/70 p-5 backdrop-blur-sm">
+    <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFade .45s ease-out both" }}>
+      <style>{`@keyframes veilFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <img src={scene.image} alt={scene.name} className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/35 to-background/95" />
+      <div className="relative flex min-h-[680px] flex-col justify-end p-4 sm:p-8">
+        <div className="mx-auto w-full max-w-4xl">
+          <DebateCharacters speaker={speaker as "Adrian Vale" | "Samuel Crowe" | null} />
+          <div className="relative z-10 mt-[-22px] rounded-sm border border-white/15 bg-black/80 p-5 shadow-2xl backdrop-blur-md">
             <p className="text-[10px] uppercase tracking-[0.25em] text-primary">{speaker}</p>
             <p className="mt-2 text-sm leading-relaxed text-white/90">"{line}"</p>
-          </div>
-          <div className="mt-3 grid gap-2">
-            {options.map((option) => (
-              <button key={option.label} onClick={() => onChoose(option.correct)} className="rounded-sm border border-white/15 bg-black/65 px-4 py-3 text-left text-sm text-white transition-all hover:border-primary hover:bg-primary/10">
-                {option.label}
-              </button>
-            ))}
+            <div className="mt-4 grid gap-2">
+              {options.map((option) => (
+                <button
+                  key={option.label}
+                  onClick={() => onChoose(option.correct)}
+                  className="rounded-sm border border-white/15 bg-black/65 px-4 py-3 text-left text-sm text-white transition-all hover:border-primary hover:bg-primary/10"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
