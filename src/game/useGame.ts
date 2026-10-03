@@ -13,6 +13,7 @@ export type GameState = {
   screen: Screen;
   clues: string[];
   asked: string[];
+  notes: string[];
   accused: string | null;
   character: PlayerCharacter | null;
 };
@@ -24,6 +25,7 @@ const initialState: GameState = {
   screen: "title",
   clues: [],
   asked: [],
+  notes: [],
   accused: null,
   character: null,
 };
@@ -35,6 +37,7 @@ function restoreState(raw: string): GameState {
     ...saved,
     clues: Array.isArray(saved.clues) ? saved.clues : [],
     asked: Array.isArray(saved.asked) ? saved.asked : [],
+    notes: Array.isArray(saved.notes) ? saved.notes : [],
     character: saved.character ?? null,
   };
 }
@@ -99,6 +102,12 @@ export function useGame() {
     return isNew;
   }, []);
 
+  const addNote = useCallback((text: string) => {
+    const value = text.trim();
+    if (!value) return;
+    setState((s) => ({ ...s, notes: [...s.notes, value] }));
+  }, []);
+
   const markAsked = useCallback((id: string) => {
     setState((s) => (s.asked.includes(id) ? s : { ...s, asked: [...s.asked, id] }));
   }, []);
@@ -127,6 +136,7 @@ export function useGame() {
     go,
     addClue,
     markAsked,
+    addNote,
     accuse,
     setCharacter,
     has,
