@@ -18,7 +18,6 @@ import { Case02Game } from "@/components/game/Case02Game";
 import { Input } from "@/components/ui/input";
 import { DIFFICULTIES, answerForDifficulty, shouldShowInvestigationSpot, type Difficulty } from "@/game/difficulty";
 import coverAsset from "@/assets/veiloris-cover.png.asset.json";
-import adrianDebate from "@/assets/adrian-debate.svg";
 import samuelDebate from "@/assets/samuel-debate.svg";
 import samuelFullBody from "@/assets/samuel-crowe-fullbody.webp";
 import adrianFullBody from "@/assets/adrian-vale-fullbody.webp";
