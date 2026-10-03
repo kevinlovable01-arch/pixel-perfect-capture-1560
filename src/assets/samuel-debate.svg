@@ -16,7 +16,6 @@
 .head{transform-box:fill-box;transform-origin:50% 80%;animation:head 5.9s ease-in-out infinite}
 .hand{transform-box:fill-box;transform-origin:15% 20%;animation:hand 3.4s ease-in-out infinite}
 </style>
-<rect width="520" height="760" rx="20" fill="url(#bg)"/>
 <ellipse cx="260" cy="715" rx="205" ry="34" fill="#000" opacity=".55" filter="url(#shadow)"/>
 <g class="person">
 <path d="M75 735V460M445 735V460" stroke="#111613" stroke-width="25"/><path d="M58 475Q260 405 462 475" fill="none" stroke="#303a35" stroke-width="18"/>
@@ -44,6 +43,5 @@
 </g>
 <path d="M156 684q30-25 61-4l23 22q-33 18-64 4zM364 684q-30-25-61-4l-23 22q33 18 64 4z" fill="url(#skin)"/>
 </g>
-<path d="M35 684Q260 645 485 684L505 760H15z" fill="url(#table)" stroke="#5b685f" stroke-width="3"/>
-<path d="M52 691Q260 660 468 691" fill="none" stroke="#78877e" stroke-width="4" opacity=".35"/>
+
 </svg>
