@@ -10,6 +10,7 @@ import {
   clueById,
   type Location,
   type Suspect,
+  type Spot,
 } from "@/game/case01";
 import { useGame, type PlayerCharacter } from "@/game/useGame";
 import { Button } from "@/components/ui/button";
@@ -434,77 +435,122 @@ function LocationView({
   location: Location;
   onBack: () => void;
 }) {
+  const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [found, setFound] = useState<string | null>(null);
 
-  const pendingRevisit = CLUES.filter(
-    (c) =>
-      c.revisit &&
-      location.spots.some((s) => s.gives === c.id) &&
-      game.has(c.id) &&
-      game.has(c.revisit!.requires) &&
-      !game.has(c.revisit!.gives),
+  const visibleSpots = location.spots.filter((spot, index) =>
+    shouldShowInvestigationSpot(spot.id, index, game.state.difficulty),
   );
+
+  const examine = (spot: Spot) => {
+    if (!game.hasAll(spot.requires)) return;
+
+    let clueId = spot.gives;
+    if (spot.gives) {
+      const clue = clueById(spot.gives);
+      if (clue.revisit && game.has(clue.revisit.requires) && !game.has(clue.revisit.gives)) {
+        clueId = clue.revisit.gives;
+      }
+      if (clueId && !game.has(clueId)) game.addClue(clueId);
+    }
+
+    setSelectedSpot(spot);
+    setFound(clueId ?? null);
+  };
+
+  const selectedClue = found ? clueById(found) : null;
+  const selectedBaseClue = selectedSpot?.gives ? clueById(selectedSpot.gives) : null;
+  const locked = selectedSpot ? !game.hasAll(selectedSpot.requires) : false;
 
   return (
     <div>
       <button className="text-xs text-muted-foreground underline underline-offset-4" onClick={onBack}>
         ← Voltar
       </button>
-      <div className="panel mt-3 p-6">
-        <h2 className="text-2xl">{location.name}</h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{location.description}</p>
 
-        <p className="mt-6 text-xs uppercase tracking-[0.25em] text-primary">Onde procurar?</p>
-        <div className="mt-3 grid gap-2">
-          {location.spots.map((spot, index) => {
-            const hiddenByDifficulty = !shouldShowInvestigationSpot(spot.id, index, game.state.difficulty);
-            if (hiddenByDifficulty) return null;
-            const locked = !game.hasAll(spot.requires);
-            const done = !!spot.gives && game.has(spot.gives);
+      <div className="panel mt-3 overflow-hidden p-3 sm:p-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-2xl">{location.name}</h2>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{location.description}</p>
+          </div>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-primary">
+            Examine a cena
+          </p>
+        </div>
+
+        <div className="relative mt-5 aspect-[16/9] overflow-hidden rounded-sm border border-primary/30 bg-black">
+          <img src={location.image} alt={location.name} className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10 pointer-events-none" />
+
+          {visibleSpots.map((spot) => {
+            const isDone = !!spot.gives && game.has(spot.gives);
+            const isLocked = !game.hasAll(spot.requires);
+            const radius = spot.radius ?? 9;
             return (
               <button
                 key={spot.id}
-                disabled={locked}
-                onClick={() => {
-                  if (!spot.gives) return;
-                  game.addClue(spot.gives);
-                  setFound(spot.gives);
+                type="button"
+                aria-label="Examinar detalhe da cena"
+                disabled={isLocked}
+                onClick={() => examine(spot)}
+                className="absolute rounded-full border border-transparent bg-transparent transition-all duration-200 hover:border-primary/80 hover:bg-primary/10 focus-visible:border-primary focus-visible:bg-primary/15 disabled:cursor-default disabled:border-transparent disabled:bg-transparent"
+                style={{
+                  left: `${spot.x}%`,
+                  top: `${spot.y}%`,
+                  width: `${radius * 2}%`,
+                  height: `${radius * 2}%`,
+                  transform: "translate(-50%, -50%)",
                 }}
-                className={`flex items-center justify-between rounded-sm border px-4 py-3 text-left text-sm transition-colors ${
-                  locked
-                    ? "cursor-not-allowed border-border/60 text-muted-foreground/50"
-                    : "border-border hover:border-primary"
-                }`}
               >
-                <span>
-                  {spot.label}
-                  <span className="block text-xs text-muted-foreground">
-                    {locked ? "Você ainda não sabe o que procurar aqui." : (spot.flavor ?? "Examinar")}
-                  </span>
-                </span>
-                {done && <span className="text-xs text-primary">examinado</span>}
+                {isDone && (
+                  <span className="absolute inset-1 rounded-full border border-primary/55 opacity-70" />
+                )}
               </button>
             );
           })}
+
+          <div className="absolute bottom-3 left-3 rounded-sm border border-white/15 bg-black/65 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-white/70 backdrop-blur-sm">
+            Clique onde quiser investigar
+          </div>
         </div>
 
-        {pendingRevisit.map((c) => (
-          <div key={c.id} className="mt-4 rounded-sm border border-primary/50 p-4">
-            <p className="text-display text-primary">Revisar: {c.title}</p>
-            <Button
-              size="sm"
-              className="mt-3"
-              onClick={() => {
-                game.addClue(c.revisit!.gives);
-                setFound(c.revisit!.gives);
-              }}
-            >
-              Examinar novamente
-            </Button>
-          </div>
-        ))}
+        {selectedSpot && (
+          <div className="mt-4 rounded-sm border border-primary/35 bg-background/95 p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.25em] text-primary">Examinando</p>
+                <h3 className="text-display mt-1 text-xl">{selectedSpot.label}</h3>
+              </div>
+              <button
+                type="button"
+                className="text-xs text-muted-foreground underline"
+                onClick={() => { setSelectedSpot(null); setFound(null); }}
+              >
+                Fechar
+              </button>
+            </div>
 
-        {found && <ClueCard id={found} game={game} />}
+            {locked ? (
+              <p className="mt-4 text-sm text-muted-foreground">
+                Ainda não há contexto suficiente para interpretar este detalhe.
+              </p>
+            ) : selectedClue ? (
+              <ClueCard id={selectedClue} game={game} />
+            ) : (
+              <div className="mt-4 border-t border-border/60 pt-4">
+                <p className="text-sm text-muted-foreground">
+                  {selectedSpot.flavor ?? "Nada conclusivo foi encontrado aqui."}
+                </p>
+                {selectedBaseClue?.revisit && game.has(selectedBaseClue.revisit.requires) && (
+                  <p className="mt-3 text-xs uppercase tracking-wider text-primary">
+                    Este detalhe merece uma nova leitura.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
