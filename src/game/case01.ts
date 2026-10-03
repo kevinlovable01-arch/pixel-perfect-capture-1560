@@ -421,6 +421,7 @@ export const SUSPECTS: Suspect[] = [
       { id: "q2a", q: "Alguém viu você no convés?", requiresQuestions: ["q2"], a: "Não sei. Estava escuro e todo mundo se movia.", tell: "O álibi depende de uma noite impossível de observar." },
       { id: "q3a", q: "Então você admite que esteve perto da cabine?", requiresQuestions: ["q3"], a: "Não. Eu disse exatamente o contrário.", tell: "A pergunta tenta transformar uma negativa em admissão." },
       { id: "q3b", specialty: "Persuasão", q: "Você conhece a vela da cabine?", requiresQuestions: ["q3a"], a: "Só sei que havia uma vela lá. Todo mundo sabe disso.", tell: "Uma resposta aparentemente banal cria uma inconsistência quando comparada ao local do crime.", gives: "daniel_vela", requires: ["vela"] },
+      { id: "q3c", q: "Sem entrar na cabine, como você sabe que havia uma vela?", requiresQuestions: ["q3a"], a: "Eu já tinha visto a cabine antes.", gives: "daniel_vela", requires: ["vela"] },
       { id: "q1b", q: "O que você sabe sobre os horários de troca de turno?", requiresQuestions: ["q1"], a: "Aprendi observando os outros.", gives: "daniel_rotinas" }
     
 ],
