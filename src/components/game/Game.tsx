@@ -20,6 +20,7 @@ import { DIFFICULTIES, answerForDifficulty, shouldShowInvestigationSpot, type Di
 import coverAsset from "@/assets/veiloris-cover.png.asset.json";
 import samuelFullBody from "@/assets/samuel-crowe-fullbody.webp";
 import adrianFullBody from "@/assets/adrian-vale-fullbody.webp";
+import case01ConclusionScene from "@/assets/case01-conclusion-scene.svg";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
@@ -896,7 +897,7 @@ function Conclusion({ game }: { game: GameApi }) {
 
   // Caso 01 tem uma única sala de reunião para a conclusão.
   // Não existe mais escolha de cenário: os dois investigadores fecham o caso juntos.
-  const scene = LOCATIONS.find((location) => location.id === "cabine") ?? LOCATIONS[0]!;
+  const scene = { id: "case01-conclusion", name: "Sala de reunião", image: case01ConclusionScene } as Location;
 
   const advance = (correct: boolean) => {
     if (correct) setDebateScore((score) => score + 1);
