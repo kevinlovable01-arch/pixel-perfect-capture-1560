@@ -21,7 +21,12 @@ type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
 export function Game() {
   const game = useGame();
+  const [selectedCase, setSelectedCase] = useState<1 | 2>(1);
   const { state } = game;
+
+  if (selectedCase === 2) {
+    return <Case02Game onBack={() => setSelectedCase(1)} />;
+  }
 
   if (!game.loaded) return <div className="min-h-screen" />;
 
@@ -34,7 +39,7 @@ export function Game() {
           game.go("character");
         }}
         onResume={() => game.resume()}
-        onCase2={() => game.go("title")}
+        onCase2={() => setSelectedCase(2)}
       />
     );
   }
