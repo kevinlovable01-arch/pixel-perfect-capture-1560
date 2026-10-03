@@ -69,7 +69,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
         <div>
           <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{CASE.code}</p>
           <h1 className="text-2xl">{CASE.title}</h1>
-          <p className="mt-1 text-xs text-muted-foreground">Nova investigação · {CASE.crewTotal} pessoas a bordo</p>
+          <p className="mt-1 text-xs text-muted-foreground">Nova investigação · {CASE.crewTotal} pessoas a bordo · Dificuldade {difficulty === "facil" ? "Fácil" : difficulty === "media" ? "Média" : "Difícil"}</p>
         </div>
         <button className="text-xs text-muted-foreground underline underline-offset-4" onClick={onBack}>Casos</button>
       </header>
@@ -158,7 +158,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
                       <div className="mt-3 space-y-4">
                         {asked.filter((id) => id.startsWith(suspect.id + ":")).map((key, index) => {
                           const qid = key.split(":")[1]; const q = suspect.questions.find((x) => x.id === qid)!;
-                          return <div key={key} className="border-l border-primary/50 pl-3"><p className="text-xs text-white/50">Pergunta {index + 1}</p><p className="mt-1 text-sm text-primary">Você: {q.q}</p><p className="mt-1 text-sm leading-relaxed text-white/90">"{q.a}"</p>{q.tell && <p className="mt-2 text-xs italic text-white/55">{q.tell}</p>}</div>;
+                          return <div key={key} className="border-l border-primary/50 pl-3"><p className="text-xs text-white/50">Pergunta {index + 1}</p><p className="mt-1 text-sm text-primary">Você: {q.q}</p><p className="mt-1 text-sm leading-relaxed text-white/90">"{answerForDifficulty(q.a, difficulty)}"</p>{q.tell && <p className="mt-2 text-xs italic text-white/55">{q.tell}</p>}</div>;
                         })}
                       </div>
                     </div>
