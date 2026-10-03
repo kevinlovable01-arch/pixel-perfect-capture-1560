@@ -35,7 +35,7 @@ function firstSentence(text: string) {
 
 function firstClause(text: string) {
   const parts = text.split(/[,;:]/);
-  return parts[0].trim() + (parts.length > 1 ? "." : "");
+  return (parts[0] ?? "").trim() + (parts.length > 1 ? "." : "");
 }
 
 /**
@@ -53,7 +53,9 @@ export function answerForDifficulty(text: string, difficulty: Difficulty) {
 
   const sentence = firstSentence(text);
   const clause = firstClause(sentence);
-  if (clause.length < 12) return "Não tenho mais nada a acrescentar.";\n  if (clause === sentence) return clause + " Não vou entrar em detalhes além disso.";\n  return clause + " Não vou entrar em detalhes além disso.";
+  if (clause.length < 12) return "Não tenho mais nada a acrescentar.";
+  if (clause === sentence) return clause + " Não vou entrar em detalhes além disso.";
+  return clause + " Não vou entrar em detalhes além disso.";
 }
 
 /**

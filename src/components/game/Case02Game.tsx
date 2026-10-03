@@ -73,7 +73,7 @@ export function Case02Game({ character, difficulty, onBack }: { character: Playe
   const evidence = useMemo(() => KEY_EVIDENCE.filter(has).length, [clues]);
 
   if (finished && choice) {
-    const verdict = VERDICTS[choice] ?? VERDICTS.c2_elisa;
+    const verdict = VERDICTS[choice] ?? VERDICTS["c2_elisa"]!;
     const correct = choice === "c2_elisa";
     return (
       <main className="mx-auto max-w-2xl px-6 py-16">
