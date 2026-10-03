@@ -307,7 +307,9 @@ function Dialogue({ who, line }: { who: "adrian" | "samuel"; line: string }) {
 type GameApi = ReturnType<typeof useGame>;
 
 function Hub({ game, onMenu }: { game: GameApi; onMenu?: () => void }) {
-  const [tab, setTab] = useState<Tab>("investigar");
+  const canInvestigate = game.state.character?.specialty === "Observação";
+  const canInterrogate = game.state.character?.specialty === "Persuasão";
+  const [tab, setTab] = useState<Tab>(canInvestigate ? "investigar" : "interrogar");
   const [location, setLocation] = useState<Location | null>(null);
   const [suspect, setSuspect] = useState<Suspect | null>(null);
 
@@ -345,30 +347,46 @@ function Hub({ game, onMenu }: { game: GameApi; onMenu?: () => void }) {
         </div>
         <button
           className="text-xs text-muted-foreground underline underline-offset-4"
-          onClick={() => { onMenu?.(); game.go("title"); }}
+          onClick={() => { onMenu?.(); game.reset(); }}
         >
           Menu
         </button>
       </header>
 
       <nav className="mt-6 flex flex-wrap gap-2">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => {
-              setTab(t.id);
-              setLocation(null);
-              setSuspect(null);
-            }}
-            className={`rounded-sm border px-3 py-1.5 text-xs uppercase tracking-wider transition-colors ${
-              tab === t.id
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border text-muted-foreground hover:border-primary/60 hover:text-foreground"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+        {tabs.map((t) => {
+          const locked =
+            (t.id === "investigar" && !canInvestigate) ||
+            (t.id === "interrogar" && !canInterrogate);
+          return (
+            <button
+              key={t.id}
+              disabled={locked}
+              onClick={() => {
+                if (locked) return;
+                setTab(t.id);
+                setLocation(null);
+                setSuspect(null);
+              }}
+              title={
+                locked
+                  ? canInvestigate
+                    ? "Bloqueado: esta investigação é conduzida por Samuel."
+                    : "Bloqueado: esta investigação é conduzida por Adrian."
+                  : undefined
+              }
+              className={`rounded-sm border px-3 py-1.5 text-xs uppercase tracking-wider transition-colors ${
+                locked
+                  ? "cursor-not-allowed border-border/50 text-muted-foreground/35"
+                  : tab === t.id
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground hover:border-primary/60 hover:text-foreground"
+              }`}
+            >
+              {locked ? "🔒 " : ""}{t.label}
+            </button>
+          );
+        })}
       </nav>
 
       {revisits.length > 0 && (
@@ -389,15 +407,20 @@ function Hub({ game, onMenu }: { game: GameApi; onMenu?: () => void }) {
             <LocationView game={game} location={location} onBack={() => setLocation(null)} />
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
-              {LOCATIONS.map((l) => (
-                <button key={l.id} className="panel p-5 text-left" onClick={() => setLocation(l)}>
+              {canInvestigate ? LOCATIONS.map((l) => (
+                <button key={l.id} className="panel p-5 text-left hover:border-primary" onClick={() => setLocation(l)}>
                   <h2 className="text-lg">{l.name}</h2>
                   <p className="mt-1 text-xs uppercase tracking-wider text-primary">{l.subtitle}</p>
                   <p className="mt-2 text-xs text-muted-foreground">
                     {l.spots.filter((s) => s.gives && game.has(s.gives)).length}/{l.spots.filter((s) => s.gives).length} pistas
                   </p>
                 </button>
-              ))}
+              )) : (
+                <LockedMode
+                  title="Investigação visual bloqueada"
+                  text="Você escolheu Adrian Vale. A busca física por pistas fica com Samuel Crowe. Você só pode avançar por interrogatórios."
+                />
+              )}
             </div>
           ))}
 
@@ -805,36 +828,188 @@ function Timeline({ game }: { game: GameApi }) {
 
 /* ------------------------------------------------------------ conclusão */
 
+function LockedMode({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="panel col-span-full flex min-h-56 flex-col items-center justify-center p-8 text-center opacity-75">
+      <div className="text-3xl">🔒</div>
+      <p className="mt-4 text-xs uppercase tracking-[0.25em] text-primary">{title}</p>
+      <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">{text}</p>
+    </div>
+  );
+}
+
 function Conclusion({ game }: { game: GameApi }) {
+  type DebateStep = "arrival" | "evidence" | "connection" | "candidates";
+  const [step, setStep] = useState<DebateStep>("arrival");
+  const [debateScore, setDebateScore] = useState(0);
   const [choice, setChoice] = useState<string | null>(null);
   const evidence = KEY_EVIDENCE.filter((id) => game.has(id));
+  const completeEvidence = evidence.length === KEY_EVIDENCE.length;
+  const scene = LOCATIONS.find((l) => l.id === "registros") ?? LOCATIONS[0];
+
+  const advance = (correct: boolean) => {
+    if (correct) setDebateScore((score) => score + 1);
+    setStep((current) =>
+      current === "arrival" ? "evidence" : current === "evidence" ? "connection" : "candidates",
+    );
+  };
+
+  if (step === "arrival") {
+    return (
+      <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black">
+        <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-background" />
+        <div className="relative flex min-h-[680px] flex-col justify-end p-5 sm:p-8">
+          <div className="mx-auto w-full max-w-3xl text-center">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Conselho dos dois</p>
+            <h2 className="mt-2 text-3xl text-white sm:text-4xl">Agora, os dois sentam à mesa.</h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/70">
+              A investigação de campo termina aqui. O parceiro traz o que descobriu na outra frente,
+              e vocês precisam separar fato, interpretação e hipótese antes de citar dois nomes.
+            </p>
+            <div className="mx-auto mt-10 flex max-w-xl items-end justify-center gap-4">
+              <div className="flex h-44 w-32 flex-col items-center justify-end rounded-t-full border border-primary/30 bg-black/45 p-3">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-2xl text-primary">AV</div>
+                <div className="mt-2 h-7 w-20 rounded-t-full bg-black/80" />
+              </div>
+              <div className="mb-4 h-14 w-48 rounded-[50%] border border-primary/30 bg-black/60 shadow-2xl" />
+              <div className="flex h-44 w-32 flex-col items-center justify-end rounded-t-full border border-primary/30 bg-black/45 p-3">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-2xl text-primary">SC</div>
+                <div className="mt-2 h-7 w-20 rounded-t-full bg-black/80" />
+              </div>
+            </div>
+            <Button className="mt-8" size="lg" onClick={() => setStep("evidence")}>Sentar e começar a conversa</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "evidence") {
+    const partnerHint = game.state.character?.specialty === "Observação"
+      ? "Adrian coloca os depoimentos sobre a mesa. Ele lembra que algumas respostas pareciam convincentes, mas não explicavam o horário do confronto."
+      : "Samuel coloca suas anotações visuais sobre a mesa. Ele lembra que o rastro da tempestade não explica sozinho quem entrou na cabine.";
+    return (
+      <DebateScene
+        scene={scene}
+        speaker="Adrian Vale"
+        line={partnerHint}
+        options={[
+          { label: "Separar o que foi visto do que foi apenas dito.", correct: true },
+          { label: "Começar pelo suspeito que mais parecia ter motivo.", correct: false },
+        ]}
+        onChoose={advance}
+      />
+    );
+  }
+
+  if (step === "connection") {
+    return (
+      <DebateScene
+        scene={scene}
+        speaker="Samuel Crowe"
+        line={completeEvidence
+          ? "Os horários, o acesso e a inconsistência nos registros formam uma sequência. Agora precisamos decidir qual conexão realmente fecha o caso."
+          : "Ainda faltam peças. Se tratarmos uma hipótese como prova, podemos colocar o nome errado na mesa."}
+        options={[
+          { label: completeEvidence ? "Cruzar horários, acesso e as pistas decisivas." : "Tratar a hipótese mais forte como se fosse prova.", correct: completeEvidence },
+          { label: "Escolher quem tinha o motivo mais óbvio.", correct: false },
+        ]}
+        onChoose={advance}
+      />
+    );
+  }
+
+  const cleanDebate = debateScore >= 2 && completeEvidence;
+  const candidates = cleanDebate
+    ? ["daniel", "marcus"]
+    : debateScore >= 1
+      ? ["marcus", "rowan"]
+      : ["hugo", "tobias"];
+  const candidatePeople = candidates.map((id) => SUSPECTS.find((s) => s.id === id)).filter(Boolean) as Suspect[];
 
   return (
-    <div className="panel p-6">
-      <h2 className="text-xl">Quem é o infiltrado?</h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Você entregará um nome ao cliente. Provas decisivas reunidas: {evidence.length} de{" "}
-        {KEY_EVIDENCE.length}.
-      </p>
+    <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black">
+      <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/60 to-background" />
+      <div className="relative flex min-h-[680px] flex-col p-5 sm:p-8">
+        <div className="mx-auto w-full max-w-3xl">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Os dois chegaram a uma mesa</p>
+          <h2 className="mt-2 text-3xl text-white">Dois nomes. Uma decisão.</h2>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">
+            O debate terminou. Agora vocês só podem levar dois nomes adiante. Um deles pode ser a resposta —
+            ou vocês podem ter construído uma conclusão errada.
+          </p>
 
-      <div className="mt-5 grid gap-2 sm:grid-cols-2">
-        {SUSPECTS.map((s) => (
-          <button
-            key={s.id}
-            onClick={() => setChoice(s.id)}
-            className={`rounded-sm border px-4 py-3 text-left text-sm transition-colors ${
-              choice === s.id ? "border-primary bg-primary/10" : "border-border hover:border-primary/60"
-            }`}
-          >
-            {s.name}
-            <span className="block text-xs text-muted-foreground">{s.role}</span>
-          </button>
-        ))}
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            {candidatePeople.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setChoice(s.id)}
+                className={`rounded-sm border border-white/15 bg-black/55 p-5 text-left text-white transition-all hover:border-primary ${
+                  choice === s.id ? "border-primary bg-primary/10" : ""
+                }`}
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-primary">{s.role}</p>
+                <h3 className="mt-1 text-xl">{s.name}</h3>
+                <p className="mt-2 text-xs text-white/55">Hipótese formada durante o debate.</p>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
+            <p className="text-xs text-white/50">Pistas decisivas: {evidence.length}/{KEY_EVIDENCE.length} · Debate consistente: {debateScore}/2</p>
+            <Button size="lg" disabled={!choice} onClick={() => game.accuse(choice!)}>Escolher este nome</Button>
+          </div>
+        </div>
       </div>
+    </div>
+  );
+}
 
-      <Button className="mt-6" size="lg" disabled={!choice} onClick={() => game.accuse(choice!)}>
-        Entregar a conclusão
-      </Button>
+function DebateScene({
+  scene,
+  speaker,
+  line,
+  options,
+  onChoose,
+}: {
+  scene: Location;
+  speaker: string;
+  line: string;
+  options: Array<{ label: string; correct: boolean }>;
+  onChoose: (correct: boolean) => void;
+}) {
+  return (
+    <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black">
+      <img src={scene.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/60 to-background" />
+      <div className="relative flex min-h-[680px] flex-col justify-end p-5 sm:p-8">
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="mb-5 flex items-end justify-center gap-3">
+            <div className="h-24 w-20 rounded-t-full border border-primary/30 bg-black/55 p-2 text-center text-primary">
+              <div className="flex h-12 items-center justify-center rounded-full border border-primary/40 text-xs">AV</div>
+              <div className="mx-auto mt-2 h-5 w-12 rounded-t-full bg-black/80" />
+            </div>
+            <div className="h-10 w-44 rounded-[50%] border border-primary/30 bg-black/60" />
+            <div className="h-24 w-20 rounded-t-full border border-primary/30 bg-black/55 p-2 text-center text-primary">
+              <div className="flex h-12 items-center justify-center rounded-full border border-primary/40 text-xs">SC</div>
+              <div className="mx-auto mt-2 h-5 w-12 rounded-t-full bg-black/80" />
+            </div>
+          </div>
+          <div className="rounded-sm border border-white/15 bg-black/70 p-5 backdrop-blur-sm">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-primary">{speaker}</p>
+            <p className="mt-2 text-sm leading-relaxed text-white/90">"{line}"</p>
+          </div>
+          <div className="mt-3 grid gap-2">
+            {options.map((option) => (
+              <button key={option.label} onClick={() => onChoose(option.correct)} className="rounded-sm border border-white/15 bg-black/65 px-4 py-3 text-left text-sm text-white transition-all hover:border-primary hover:bg-primary/10">
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -870,9 +1045,19 @@ function Verdict({ game }: { game: GameApi }) {
           variant="outline"
           onClick={() => {
             game.reset();
+            window.location.reload();
           }}
         >
           Recomeçar o caso
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            game.reset();
+            window.location.reload();
+          }}
+        >
+          Voltar ao menu
         </Button>
       </div>
     </main>
