@@ -390,6 +390,7 @@ export const SUSPECTS: Suspect[] = [
       { id: "q2", q: "Quem teve acesso aos registros naquela tarde?", a: "Muita gente. É uma sala de serviço.", tell: "A resposta não exclui ninguém." },
       { id: "q3", q: "Você poderia alterar um registro sem que ninguém percebesse?", a: "Eu poderia. Mas isso não significa que fiz.", tell: "A pergunta coloca Miriam no centro sem evidência." },
       { id: "q1a", specialty: "Observação", q: "O que os números no papel de Elias significam?", requiresQuestions: ["q1"], a: "São referências às minhas linhas de registro.", gives: "sequencia", requires: ["papel"] },
+      { id: "q1b", q: "Esses números apontam para alguma linha específica?", requiresQuestions: ["q1"], a: "Sim. São referências às linhas dos meus registros.", gives: "sequencia", requires: ["papel"] },
       { id: "q2a", q: "Quem você viu perto dos livros?", requiresQuestions: ["q2"], a: "Não lembro de todos. O movimento foi grande.", tell: "Memória incompleta não é confissão." },
       { id: "q3a", q: "Então você poderia ter apagado a linha das 17:42.", requiresQuestions: ["q3"], a: "Poderia. E qualquer pessoa com uma raspadeira também.", gives: "registro_alterado", requires: ["registro_alterado"] },
       { id: "q3b", specialty: "Persuasão", q: "Você está tentando proteger alguém?", requiresQuestions: ["q3a"], a: "Estou tentando proteger a integridade dos registros. Isso é diferente.", tell: "O caminho da suspeita contra Miriam não encontra um motivo concreto." }
