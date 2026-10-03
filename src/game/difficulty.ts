@@ -70,12 +70,12 @@ export function shouldShowInvestigationSpot(
   if (difficulty === "facil") return true;
 
   const mediumHidden = new Set([
-    "lampiao", "mar", "escotilha", "fogao", "raspadeira", "rede", "janela", "cama",
+    "lampiao", "mar", "escotilha", "fogao", "raspadeira", "rede", "janela", "cama", "mesa", "porta", "mapa", "caixas",
   ]);
 
   const hardHidden = new Set([
     "corpo", "janela", "cama", "lampiao", "mar", "escotilha", "fogao", "raspadeira",
-    "rede", "costado",
+    "rede", "costado", "corpo", "moldura", "chaves", "lacre", "diario", "mapa", "caixas", "mesa", "porta",
   ]);
 
   if (difficulty === "media") return !mediumHidden.has(spotId);
@@ -84,7 +84,7 @@ export function shouldShowInvestigationSpot(
   // e evidências secundárias desaparecem até que a cadeia correta os revele.
   const hardCore = new Set([
     "vela", "mesa", "livro", "estantes", "ferragens", "cartas", "calculos",
-    "prateleira", "lanterna", "lacres",
+    "prateleira", "lanterna", "lacres", "moldura", "lacre", "diario", "chaves",
   ]);
   return hardCore.has(spotId) || index === 0;
 }
