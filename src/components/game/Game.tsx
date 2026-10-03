@@ -910,9 +910,9 @@ function Conclusion({ game }: { game: GameApi }) {
         speaker="Samuel Crowe"
         line={completeEvidence
           ? "Os horários, o acesso e a inconsistência nos registros formam uma sequência. Agora precisamos decidir qual conexão realmente fecha o caso."
-          : "Ainda faltam peças. Se tratarmos uma hipótese como prova, podemos colocar o nome errado na mesa."}
+          : "Eu trouxe as peças que você não conseguiu ver. Agora precisamos separar a hipótese da conexão que realmente fecha o caso."}
         options={[
-          { label: completeEvidence ? "Cruzar horários, acesso e as pistas decisivas." : "Tratar a hipótese mais forte como se fosse prova.", correct: completeEvidence },
+          { label: "Cruzar horários, acesso e as pistas decisivas.", correct: true },
           { label: "Escolher quem tinha o motivo mais óbvio.", correct: false },
         ]}
         onChoose={advance}
@@ -920,7 +920,7 @@ function Conclusion({ game }: { game: GameApi }) {
     );
   }
 
-  const cleanDebate = debateScore >= 2 && completeEvidence;
+  const cleanDebate = debateScore >= 2;
   const candidates = cleanDebate
     ? ["daniel", "marcus"]
     : debateScore >= 1
