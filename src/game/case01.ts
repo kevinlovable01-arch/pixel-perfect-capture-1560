@@ -35,6 +35,8 @@ export type Spot = {
   gives?: string;
   flavor?: string;
   requires?: string[];
+  /** Perguntas anteriores que precisam ter sido feitas para abrir este caminho. */
+  requiresQuestions?: string[];
 };
 
 export type Location = {
@@ -250,8 +252,9 @@ export const SUSPECTS: Suspect[] = [
     ],
     questions: [
       { id: "q1", q: "Qual era sua relação com Elias?", a: "Boa. Trabalhamos juntos sete anos. Tivemos desentendimentos, como qualquer um.", tell: "Escolheu a palavra 'desentendimento' com cuidado.", aside: { who: "samuel", line: "Ele está medindo o que pode dizer." }, gives: "marcus_discussao" },
-      { id: "q2", q: "Que desentendimento?", asker: "samuel", a: "Eu queria tirar três homens da tripulação. Ele não deixou. Ponto.", tell: "Cruzou os braços. Defensivo.", aside: { who: "adrian", line: "Ele não disse por que queria tirá-los." }, requires: ["marcus_discussao"] },
-      { id: "q3", q: "Por que queria afastar aqueles três?", a: "...Porque a carga não fecha. Faltam volumes e sobram lacres. Eu ia resolver sozinho antes de acusar alguém.", tell: "O tom baixou. Parece aliviado em falar.", aside: { who: "samuel", line: "Ele mentiu para nós. Mas não sobre o capitão." }, gives: "marcus_carga", requires: ["marcus_discussao"] },
+      { id: "q2", q: "Que desentendimento?", asker: "samuel", requiresQuestions: ["q1"], a: "Eu queria tirar três homens da tripulação. Ele não deixou. Ponto.", tell: "Cruzou os braços. Defensivo.", aside: { who: "adrian", line: "Ele não disse por que queria tirá-los." }, requires: ["marcus_discussao"] },
+      { id: "q3", q: "Por que queria afastar aqueles três?", a: "...Porque a carga não fecha. Faltam volumes e sobram lacres. Eu ia resolver sozinho antes de acusar alguém.", tell: "O tom baixou. Parece aliviado em falar.", aside: { who: "samuel", line: "Ele mentiu para nós. Mas não sobre o capitão." }, gives: "marcus_carga", requires: ["marcus_discussao"], requiresQuestions: ["q2"] },
+      { id: "q4", q: "Quem mais sabia das irregularidades na carga?", a: "Elias. Foi por isso que eu queria falar com ele depois.", tell: "A resposta muda o foco da conversa.", requiresQuestions: ["q1"], gives: "marcus_carga" },
     ],
   },
   {
@@ -270,7 +273,7 @@ export const SUSPECTS: Suspect[] = [
     ],
     questions: [
       { id: "q1", q: "O que você viu durante o temporal?", a: "Uma luz. Amarela. Baixa. Apareceu e sumiu. Achei que era lanterna de navio.", tell: "Responde rápido, sem desviar o olhar.", aside: { who: "adrian", line: "Amarela e baixa. Como uma lanterna nossa refletida na água." }, gives: "luz" },
-      { id: "q2", q: "E o disparo?", a: "Um estouro. Só um. Depois o vento cobriu tudo.", tell: "Hesita. Não tem certeza do que ouviu.", requires: ["som"] },
+      { id: "q2", q: "E o disparo?", requiresQuestions: ["q1"], a: "Um estouro. Só um. Depois o vento cobriu tudo.", tell: "Hesita. Não tem certeza do que ouviu.", requires: ["som"] },
     ],
   },
   {
@@ -289,7 +292,7 @@ export const SUSPECTS: Suspect[] = [
     ],
     questions: [
       { id: "q1", q: "O que você fazia no setor restrito?", a: "Nada que interesse.", tell: "Esconde as mãos. Incomodado.", aside: { who: "samuel", line: "Essa é a resposta de quem tem medo, não de quem matou." }, gives: "rowan_area" },
-      { id: "q2", q: "Pressionar sobre as ferramentas", asker: "samuel", a: "Uma viga rachou no meu turno. Eu estava consertando antes que Elias visse e me responsabilizasse.", tell: "Os ombros caem. Nervoso, mas sincero.", gives: "rowan_reparo", requires: ["rowan_area"] },
+      { id: "q2", q: "Pressionar sobre as ferramentas", asker: "samuel", requiresQuestions: ["q1"], a: "Uma viga rachou no meu turno. Eu estava consertando antes que Elias visse e me responsabilizasse.", tell: "Os ombros caem. Nervoso, mas sincero.", gives: "rowan_reparo", requires: ["rowan_area"] },
     ],
   },
   {
@@ -308,7 +311,8 @@ export const SUSPECTS: Suspect[] = [
     ],
     questions: [
       { id: "q1", q: "Onde você estava?", a: "Na cozinha. Segurando panela para não virar tudo.", tell: "Sorri demais para a situação.", aside: { who: "samuel", line: "Duas pessoas passaram pela cozinha e não viram ninguém." }, gives: "tobias_horario" },
-      { id: "q2", q: "Confrontar com as garrafas", a: "Está certo. Eu desvio bebida. Vendo em terra. Saí da cozinha para esconder as garrafas, não para matar o capitão.", tell: "O sorriso some. Envergonhado, não assustado.", requires: ["tobias_garrafas"] },
+      { id: "q2", q: "Confrontar com as garrafas", a: "Está certo. Eu desvio bebida. Vendo em terra. Saí da cozinha para esconder as garrafas, não para matar o capitão.", tell: "O sorriso some. Envergonhado, não assustado.", requires: ["tobias_garrafas"], requiresQuestions: ["q1"] },
+      { id: "q3", q: "Quem sabia que você saía da cozinha?", a: "Pouca gente. Eu não queria que o desvio aparecesse nos registros.", requiresQuestions: ["q1"], gives: "tobias_garrafas" },
     ],
   },
   {
@@ -327,8 +331,8 @@ export const SUSPECTS: Suspect[] = [
     ],
     questions: [
       { id: "q1", q: "Onde estávamos durante o temporal?", a: "No canal norte, como previsto. Mantive o curso.", tell: "Controlada. Olha direto nos olhos.", aside: { who: "adrian", line: "Os cálculos na mesa dizem outra coisa." } },
-      { id: "q2", q: "Pressionar sobre a rota alterada", asker: "adrian", a: "Eu desviei. Três milhas. Não registrei porque ninguém precisava saber exatamente onde estávamos.", tell: "Pausa longa antes de responder.", aside: { who: "samuel", line: "Ela esconde um destino, não um crime." }, requires: ["rota"] },
-      { id: "q3", q: "Outro navio poderia ter nos alcançado?", a: "Com aquele vento? Nem eu conseguiria. Quem falou em ataque não olhou uma carta na vida.", requires: ["posicao"] },
+      { id: "q2", q: "Pressionar sobre a rota alterada", asker: "adrian", requiresQuestions: ["q1"], a: "Eu desviei. Três milhas. Não registrei porque ninguém precisava saber exatamente onde estávamos.", tell: "Pausa longa antes de responder.", aside: { who: "samuel", line: "Ela esconde um destino, não um crime." }, requires: ["rota"] },
+      { id: "q3", q: "Outro navio poderia ter nos alcançado?", requiresQuestions: ["q1"], a: "Com aquele vento? Nem eu conseguiria. Quem falou em ataque não olhou uma carta na vida.", requires: ["posicao"] },
     ],
   },
   {
@@ -347,7 +351,7 @@ export const SUSPECTS: Suspect[] = [
     ],
     questions: [
       { id: "q1", q: "Quem entrou na cabine naquele dia?", a: "Marcus, de manhã. E o aprendiz, às cinco da tarde. O capitão pediu para eu não anotar o nome dele.", tell: "Responde como quem lê uma lista. Controlada.", gives: "daniel_chamado" },
-      { id: "q2", q: "Alguém mexeu nos seus livros?", a: "Alguém raspou uma linha de turno. Eu não escrevo com raspadeira.", tell: "Pela primeira vez, irritada.", requires: ["registro_alterado"] },
+      { id: "q2", q: "Alguém mexeu nos seus livros?", requiresQuestions: ["q1"], a: "Alguém raspou uma linha de turno. Eu não escrevo com raspadeira.", tell: "Pela primeira vez, irritada.", requires: ["registro_alterado"] },
     ],
   },
   {
@@ -368,9 +372,9 @@ export const SUSPECTS: Suspect[] = [
     ],
     questions: [
       { id: "q1", q: "O capitão falou com você ontem?", a: "Falou. Perguntou da minha viagem anterior. Só isso. Saí e voltei ao trabalho.", tell: "Resposta pronta demais." },
-      { id: "q2", q: "O que você sabe sobre a cabine?", a: "Nada. Só que estava escuro lá dentro... a vela estava apagada.", tell: "Desviou o olhar ao terminar a frase.", aside: { who: "samuel", line: "Como ele sabe disso? Ninguém descreveu a vela a ninguém." }, gives: "daniel_vela", requires: ["vela"] },
-      { id: "q3", q: "Quem lhe contou da vela?", asker: "samuel", a: "Eu... ouvi alguém comentar. Não lembro quem.", tell: "As mãos param de se mexer. Nervoso.", aside: { who: "adrian", line: "Ele também sabe horários de turno que ninguém ensinou a ele." }, gives: "daniel_rotinas", requires: ["daniel_vela"] },
-      { id: "q4", q: "Confrontar com a sequência de Elias e o registro raspado", a: "(longo silêncio) Ele já sabia. Ia me expor naquela noite. Eu não embarquei para matar ninguém.", tell: "Pela primeira vez, a voz não é a de um aprendiz.", aside: { who: "samuel", line: "A verdade não estava escondida. Estava espalhada." }, gives: "daniel_identidade", requires: ["sequencia", "registro_alterado", "daniel_rotinas"] },
+      { id: "q2", q: "O que você sabe sobre a cabine?", requiresQuestions: ["q1"], a: "Nada. Só que estava escuro lá dentro... a vela estava apagada.", tell: "Desviou o olhar ao terminar a frase.", aside: { who: "samuel", line: "Como ele sabe disso? Ninguém descreveu a vela a ninguém." }, gives: "daniel_vela", requires: ["vela"] },
+      { id: "q3", q: "Quem lhe contou da vela?", asker: "samuel", requiresQuestions: ["q2"], a: "Eu... ouvi alguém comentar. Não lembro quem.", tell: "As mãos param de se mexer. Nervoso.", aside: { who: "adrian", line: "Ele também sabe horários de turno que ninguém ensinou a ele." }, gives: "daniel_rotinas", requires: ["daniel_vela"] },
+      { id: "q4", q: "Confrontar com a sequência de Elias e o registro raspado", requiresQuestions: ["q3"], a: "(longo silêncio) Ele já sabia. Ia me expor naquela noite. Eu não embarquei para matar ninguém.", tell: "Pela primeira vez, a voz não é a de um aprendiz.", aside: { who: "samuel", line: "A verdade não estava escondida. Estava espalhada." }, gives: "daniel_identidade", requires: ["sequencia", "registro_alterado", "daniel_rotinas"] },
     ],
   },
 ];
