@@ -270,7 +270,7 @@ function Hub({ game }: { game: GameApi }) {
   const tabs: { id: Tab; label: string }[] = [
     { id: "investigar", label: "Investigar" },
     { id: "interrogar", label: "Interrogar" },
-    { id: "caderno", label: `Caderno (${game.state.clues.length})` },
+    { id: "caderno", label: `Caderno (${game.state.notes.length})` },
     { id: "linha", label: "Linha do tempo" },
     { id: "concluir", label: "Conclusão" },
   ];
