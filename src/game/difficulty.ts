@@ -47,14 +47,13 @@ export function answerForDifficulty(text: string, difficulty: Difficulty) {
 
   if (difficulty === "media") {
     const sentence = firstSentence(text);
-    if (sentence === text) return text;
+    if (sentence === text) return "Até onde eu sei, " + text + " É o que consigo afirmar com segurança.";
     return sentence + " É o que consigo afirmar com segurança.";
   }
 
   const sentence = firstSentence(text);
   const clause = firstClause(sentence);
-  if (clause.length < 12 || clause === sentence) return sentence;
-  return clause + " Não vou entrar em detalhes além disso.";
+  if (clause.length < 12) return "Não tenho mais nada a acrescentar.";\n  if (clause === sentence) return clause + " Não vou entrar em detalhes além disso.";\n  return clause + " Não vou entrar em detalhes além disso.";
 }
 
 /**
