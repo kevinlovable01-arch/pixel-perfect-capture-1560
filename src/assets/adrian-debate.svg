@@ -1,38 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 520" role="img" aria-labelledby="title desc">
-<title id="title">Adrian Vale</title><desc id="desc">Ilustração estilizada de Adrian Vale, investigador e interrogador.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 760">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#15161b"/><stop offset=".5" stop-color="#303139"/><stop offset="1" stop-color="#08090c"/></linearGradient>
+ <radialGradient id="skin" cx=".35" cy=".28"><stop stop-color="#f1b59a"/><stop offset=".55" stop-color="#c98268"/><stop offset="1" stop-color="#79463d"/></radialGradient>
+ <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#46434a"/><stop offset=".45" stop-color="#17161a"/><stop offset="1" stop-color="#07070a"/></linearGradient>
+ <linearGradient id="coat" x1=".1" y1="0" x2=".9" y2="1"><stop stop-color="#3a3b44"/><stop offset=".45" stop-color="#15171d"/><stop offset="1" stop-color="#08090d"/></linearGradient>
+ <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a12f42"/><stop offset=".5" stop-color="#541b27"/><stop offset="1" stop-color="#1e0b11"/></linearGradient>
+ <linearGradient id="table" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#42352d"/><stop offset=".45" stop-color="#211a17"/><stop offset="1" stop-color="#0a0808"/></linearGradient>
+ <filter id="shadow"><feGaussianBlur stdDeviation="12"/></filter>
+ <filter id="soft"><feGaussianBlur stdDeviation="2.5"/></filter>
+</defs>
 <style>
-@keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-@keyframes gesture{0%,100%{transform:rotate(0deg)}45%{transform:rotate(-8deg)}65%{transform:rotate(4deg)}}
-@keyframes nod{0%,100%{transform:rotate(0deg)}45%{transform:rotate(2deg)}}
-.person{transform-box:fill-box;transform-origin:center bottom;animation:breathe 3.2s ease-in-out infinite}
-.gesture{transform-box:fill-box;transform-origin:80% 20%;animation:gesture 2.8s ease-in-out infinite}
-.head{transform-box:fill-box;transform-origin:center bottom;animation:nod 4.4s ease-in-out infinite}
+@keyframes breath{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-4px) scaleY(1.008)}}
+@keyframes head{0%,100%{transform:rotate(0deg)}45%{transform:rotate(-1.8deg)}70%{transform:rotate(.7deg)}}
+@keyframes hand{0%,100%{transform:rotate(0deg) translateY(0)}45%{transform:rotate(-6deg) translateY(-4px)}70%{transform:rotate(2deg)}}
+.person{transform-box:fill-box;transform-origin:center bottom;animation:breath 3.8s ease-in-out infinite}
+.head{transform-box:fill-box;transform-origin:50% 80%;animation:head 5.5s ease-in-out infinite}
+.hand{transform-box:fill-box;transform-origin:85% 20%;animation:hand 3.1s ease-in-out infinite}
 </style>
+<rect width="520" height="760" rx="20" fill="url(#bg)"/>
+<ellipse cx="260" cy="715" rx="205" ry="34" fill="#000" opacity=".55" filter="url(#shadow)"/>
 <g class="person">
-<ellipse cx="180" cy="493" rx="118" ry="15" fill="#050505" opacity=".35"/>
-<!-- seated body -->
-<path d="M83 489c5-93 20-171 59-201h76c39 30 54 108 59 201z" fill="#17191e" stroke="#8f8f94" stroke-width="2"/>
-<path d="M143 292h74l-13 78h-48z" fill="#641f2a"/>
-<path d="M153 292l27 38 27-38 10 76h-74z" fill="#eee9df"/>
+<!-- chair -->
+<path d="M75 735V460M445 735V460" stroke="#111217" stroke-width="25"/><path d="M58 475Q260 405 462 475" fill="none" stroke="#30323a" stroke-width="18"/>
+<!-- torso and coat -->
+<path d="M105 724c6-146 35-247 104-281h102c69 34 98 135 104 281z" fill="url(#coat)" stroke="#575962" stroke-width="3"/>
+<path d="M207 445h106l-18 108-35 46-35-46z" fill="url(#shirt)"/>
+<path d="M206 447l54 77 54-77 17 107-71 61-71-61z" fill="#e3ddd4" opacity=".96"/>
+<path d="M222 462l38 53 38-53" fill="none" stroke="#bdb5ac" stroke-width="4" opacity=".6"/>
+<!-- shoulders highlights -->
+<path d="M112 510Q150 462 199 451M321 451Q370 462 408 510" fill="none" stroke="#777984" stroke-width="7" opacity=".38"/>
+<!-- left arm -->
+<path d="M122 515Q70 590 82 674Q88 704 116 693Q142 682 143 643L171 557z" fill="url(#coat)" stroke="#555760" stroke-width="3"/>
+<!-- right gesturing arm -->
+<g class="hand">
+<path d="M386 515Q445 573 450 639Q452 672 424 677Q398 680 388 645L351 558z" fill="url(#coat)" stroke="#555760" stroke-width="3"/>
+<path d="M421 666q18 6 27-8l18 8q-11 29-41 20z" fill="url(#skin)"/>
+</g>
 <!-- neck -->
-<path d="M157 273h46v37c-10 13-36 13-46 0z" fill="#c88f72"/>
+<path d="M221 403h78v68q-39 29-78 0z" fill="url(#skin)"/>
 <!-- head -->
 <g class="head">
-<path d="M129 151c0-47 23-77 51-77s51 30 51 77v63c0 39-24 64-51 64s-51-25-51-64z" fill="#c99276" stroke="#38251f" stroke-width="2"/>
-<path d="M126 157c-8-50 14-92 55-92 39 0 58 30 54 83-12-17-29-27-49-28-20 1-42 13-60 37z" fill="#17151a"/>
-<path d="M135 118c12-30 36-45 68-38 15 3 28 12 34 27-17-6-31-10-46-8-20 2-38 9-56 19z" fill="#242329"/>
-<circle cx="160" cy="171" r="4" fill="#1d1715"/><circle cx="200" cy="171" r="4" fill="#1d1715"/>
-<path d="M168 206c8 5 16 5 24 0" fill="none" stroke="#6b4037" stroke-width="3" stroke-linecap="round"/>
-<path d="M146 157c9-6 18-7 28-2M187 155c9-5 18-4 27 2" fill="none" stroke="#2a1d1b" stroke-width="4" stroke-linecap="round"/>
+<ellipse cx="260" cy="335" rx="88" ry="111" fill="url(#skin)" stroke="#633a35" stroke-width="3"/>
+<!-- ears -->
+<ellipse cx="173" cy="340" rx="15" ry="27" fill="#b87561"/><ellipse cx="347" cy="340" rx="15" ry="27" fill="#b87561"/>
+<!-- hair -->
+<path d="M173 302Q173 202 262 201Q350 201 348 303L332 270Q307 247 269 249Q220 248 181 286z" fill="url(#hair)"/>
+<path d="M181 278Q206 229 267 224Q315 224 338 263" fill="none" stroke="#77737a" stroke-width="10" opacity=".32"/>
+<!-- brow/eyes -->
+<path d="M202 322Q225 309 245 321M276 321Q297 309 319 322" fill="none" stroke="#4d302b" stroke-width="8" stroke-linecap="round"/>
+<ellipse cx="226" cy="337" rx="8" ry="6" fill="#151317"/><ellipse cx="297" cy="337" rx="8" ry="6" fill="#151317"/>
+<circle cx="229" cy="335" r="2.5" fill="#fff"/><circle cx="300" cy="335" r="2.5" fill="#fff"/>
+<!-- nose -->
+<path d="M260 335l-13 48q13 9 27 0" fill="none" stroke="#8d564c" stroke-width="4" stroke-linecap="round"/>
+<!-- beard -->
+<path d="M197 388Q260 442 323 388Q317 453 260 463Q203 453 197 388z" fill="#303038" opacity=".88"/>
+<path d="M225 407Q260 422 295 407" fill="none" stroke="#15151a" stroke-width="7" stroke-linecap="round"/>
+<path d="M235 378Q260 388 285 378" fill="none" stroke="#6e3f39" stroke-width="4" stroke-linecap="round"/>
 </g>
-<!-- left arm -->
-<path d="M98 319c-28 28-43 62-45 102-1 19 10 30 23 24 18-8 20-35 29-65l30-35z" fill="#17191e" stroke="#8f8f94" stroke-width="2"/>
-<!-- gesturing right arm -->
-<g class="gesture">
-<path d="M255 318c29 22 46 55 54 89 4 18-4 31-18 27-20-6-24-33-35-60l-31-40z" fill="#17191e" stroke="#8f8f94" stroke-width="2"/>
-<path d="M289 426c7 9 17 14 28 11" fill="none" stroke="#c99276" stroke-width="11" stroke-linecap="round"/>
+<!-- hands on table -->
+<path d="M156 684q30-25 61-4l23 22q-33 18-64 4zM364 684q-30-25-61-4l-23 22q33 18 64 4z" fill="url(#skin)"/>
 </g>
-<!-- chair hints -->
-<path d="M69 493h-22v-116M291 493h22v-116" stroke="#353941" stroke-width="8" opacity=".8"/>
-</g>
+<!-- table foreground -->
+<path d="M35 684Q260 645 485 684L505 760H15z" fill="url(#table)" stroke="#5c493d" stroke-width="3"/>
+<path d="M52 691Q260 660 468 691" fill="none" stroke="#826956" stroke-width="4" opacity=".45"/>
 </svg>
