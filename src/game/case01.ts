@@ -251,11 +251,15 @@ export const SUSPECTS: Suspect[] = [
       { requires: "marcus_carga", label: "Motivo real", text: "Escondia irregularidades na carga." },
     ],
     questions: [
-      { id: "q1", q: "Qual era sua relação com Elias?", a: "Boa. Trabalhamos juntos sete anos. Tivemos desentendimentos, como qualquer um.", tell: "Escolheu a palavra 'desentendimento' com cuidado.", aside: { who: "samuel", line: "Ele está medindo o que pode dizer." }, gives: "marcus_discussao" },
-      { id: "q2", q: "Que desentendimento?", asker: "samuel", requiresQuestions: ["q1"], a: "Eu queria tirar três homens da tripulação. Ele não deixou. Ponto.", tell: "Cruzou os braços. Defensivo.", aside: { who: "adrian", line: "Ele não disse por que queria tirá-los." }, requires: ["marcus_discussao"] },
-      { id: "q3", q: "Por que queria afastar aqueles três?", a: "...Porque a carga não fecha. Faltam volumes e sobram lacres. Eu ia resolver sozinho antes de acusar alguém.", tell: "O tom baixou. Parece aliviado em falar.", aside: { who: "samuel", line: "Ele mentiu para nós. Mas não sobre o capitão." }, gives: "marcus_carga", requires: ["marcus_discussao"], requiresQuestions: ["q2"] },
-      { id: "q4", q: "Quem mais sabia das irregularidades na carga?", a: "Elias. Foi por isso que eu queria falar com ele depois.", tell: "A resposta muda o foco da conversa.", requiresQuestions: ["q1"], gives: "marcus_carga" },
-    ],
+      { id: "q1", q: "Qual era sua relação com Elias?", a: "Trabalhamos juntos por sete anos. Tivemos atritos, mas eu era leal a ele.", tell: "Ele responde rápido demais.", gives: "marcus_discussao" },
+      { id: "q2", q: "Onde você estava quando a tempestade piorou?", a: "No porão, verificando a carga. Não saí de lá.", tell: "Olha para a porta antes de responder." },
+      { id: "q3", q: "Você e Elias chegaram a discutir naquela noite?", a: "Discutimos sobre a carga. Isso não significa que eu quisesse vê-lo morto.", tell: "A pergunta parte de uma suspeita que ainda não foi provada." },
+      { id: "q1a", q: "O que exatamente vocês discutiram?", requiresQuestions: ["q1"], a: "Eu queria afastar alguns homens. Elias não deixou. A carga não fechava.", gives: "marcus_carga", requires: ["marcus_discussao"] },
+      { id: "q2a", q: "Alguém pode confirmar que você ficou no porão?", requiresQuestions: ["q2"], a: "Não o tempo todo. Houve um momento em que fui buscar um livro de contas.", tell: "A resposta enfraquece o álibi, mas não prova um crime." },
+      { id: "q3a", q: "Então você tinha motivo para matar Elias.", requiresQuestions: ["q3"], a: "Se quer acreditar nisso, vai precisar de mais do que uma discussão sobre carga.", tell: "A hipótese parece forte, mas a resposta não a confirma." },
+      { id: "q3b", q: "O que você faria se Elias denunciasse a carga?", requiresQuestions: ["q3a"], a: "Eu perderia meu posto. Talvez mais. Mas isso é diferente de matá-lo.", tell: "O ramo da suspeita financeira começa a parecer menos simples." }
+    
+],
   },
   {
     id: "hugo",
@@ -272,9 +276,15 @@ export const SUSPECTS: Suspect[] = [
       { requires: "lanterna", label: "Observações", text: "Viu algo real e interpretou errado." },
     ],
     questions: [
-      { id: "q1", q: "O que você viu durante o temporal?", a: "Uma luz. Amarela. Baixa. Apareceu e sumiu. Achei que era lanterna de navio.", tell: "Responde rápido, sem desviar o olhar.", aside: { who: "adrian", line: "Amarela e baixa. Como uma lanterna nossa refletida na água." }, gives: "luz" },
-      { id: "q2", q: "E o disparo?", requiresQuestions: ["q1"], a: "Um estouro. Só um. Depois o vento cobriu tudo.", tell: "Hesita. Não tem certeza do que ouviu.", requires: ["som"] },
-    ],
+      { id: "q1", q: "O que você viu durante o temporal?", a: "Uma luz amarela e baixa. Achei que fosse outro navio.", tell: "A teoria do ataque já está pronta na cabeça dele.", gives: "luz" },
+      { id: "q2", q: "Você viu alguém perto da cabine?", a: "Não. A chuva não deixava ver quase nada.", tell: "Pela primeira vez, ele admite uma limitação do próprio testemunho." },
+      { id: "q3", q: "A luz era de um navio que se aproximou?", a: "Tenho certeza que sim. Não vejo outra explicação.", tell: "Parece convicto — mas convicção não é prova." },
+      { id: "q1a", q: "De onde vinha a luz?", requiresQuestions: ["q1"], a: "Do lado do costado, baixa, quase na linha da água.", gives: "luz" },
+      { id: "q2a", q: "Você reconheceria uma pessoa naquele temporal?", requiresQuestions: ["q2"], a: "Não. Nem de perto.", tell: "O depoimento dele não pode identificar um suspeito." },
+      { id: "q3a", q: "Se era um navio, por que você não viu o casco?", requiresQuestions: ["q3"], a: "Porque as ondas cobriam tudo. Só vi a luz.", tell: "O caminho do 'navio externo' fica baseado em uma única interpretação." },
+      { id: "q3b", q: "Você aceita que pode ter interpretado a luz errado?", requiresQuestions: ["q3a"], a: "Não. Eu estava na torre. Eu sei o que vi.", tell: "A insistência torna a hipótese mais forte emocionalmente, não documentalmente." }
+    
+],
   },
   {
     id: "rowan",
@@ -291,9 +301,15 @@ export const SUSPECTS: Suspect[] = [
       { requires: "rowan_reparo", label: "Motivo real", text: "Consertava escondido uma viga rachada." },
     ],
     questions: [
-      { id: "q1", q: "O que você fazia no setor restrito?", a: "Nada que interesse.", tell: "Esconde as mãos. Incomodado.", aside: { who: "samuel", line: "Essa é a resposta de quem tem medo, não de quem matou." }, gives: "rowan_area" },
-      { id: "q2", q: "Pressionar sobre as ferramentas", asker: "samuel", requiresQuestions: ["q1"], a: "Uma viga rachou no meu turno. Eu estava consertando antes que Elias visse e me responsabilizasse.", tell: "Os ombros caem. Nervoso, mas sincero.", gives: "rowan_reparo", requires: ["rowan_area"] },
-    ],
+      { id: "q1", q: "Onde você estava quando ouviu o estouro?", a: "No setor de manutenção.", tell: "Ele evita explicar por que estava ali.", gives: "rowan_area" },
+      { id: "q2", q: "Você tinha acesso às ferramentas que poderiam matar Elias?", a: "Tenho acesso a quase todas as ferramentas do navio.", tell: "Tecnicamente, é verdade." },
+      { id: "q3", q: "Você entrou na cabine do capitão naquela noite?", a: "Não.", tell: "A resposta é curta demais para ser confortável." },
+      { id: "q1a", q: "Por que estava no setor restrito?", requiresQuestions: ["q1"], a: "Uma viga rachou. Eu estava tentando consertar antes que Elias descobrisse.", gives: "rowan_reparo", requires: ["rowan_area"] },
+      { id: "q2a", q: "Então você tinha uma arma ao alcance.", requiresQuestions: ["q2"], a: "Uma ferramenta não vira arma só porque você decide chamá-la assim.", tell: "A pergunta força uma conclusão antes de haver evidência." },
+      { id: "q3a", q: "Se não entrou, quem poderia ter usado suas ferramentas?", requiresQuestions: ["q3"], a: "Qualquer pessoa com acesso ao setor. Eu não conto minhas ferramentas uma por uma.", tell: "A suspeita se espalha sem produzir uma identificação." },
+      { id: "q3b", q: "Você está protegendo alguém?", requiresQuestions: ["q3a"], a: "Estou protegendo meu emprego. Só isso.", tell: "O ramo continua plausível, mas não chega ao assassinato." }
+    
+],
   },
   {
     id: "tobias",
@@ -310,10 +326,15 @@ export const SUSPECTS: Suspect[] = [
       { requires: "tobias_garrafas", label: "Motivo real", text: "Desvia bebida e vende em terra." },
     ],
     questions: [
-      { id: "q1", q: "Onde você estava?", a: "Na cozinha. Segurando panela para não virar tudo.", tell: "Sorri demais para a situação.", aside: { who: "samuel", line: "Duas pessoas passaram pela cozinha e não viram ninguém." }, gives: "tobias_horario" },
-      { id: "q2", q: "Confrontar com as garrafas", a: "Está certo. Eu desvio bebida. Vendo em terra. Saí da cozinha para esconder as garrafas, não para matar o capitão.", tell: "O sorriso some. Envergonhado, não assustado.", requires: ["tobias_garrafas"], requiresQuestions: ["q1"] },
-      { id: "q3", q: "Quem sabia que você saía da cozinha?", a: "Pouca gente. Eu não queria que o desvio aparecesse nos registros.", requiresQuestions: ["q1"], gives: "tobias_garrafas" },
-    ],
+      { id: "q1", q: "Onde você estava durante o pior momento do temporal?", a: "Na cozinha.", tell: "Ele responde sem hesitar.", gives: "tobias_horario" },
+      { id: "q2", q: "Você saiu da cozinha naquela noite?", a: "Não para nada importante.", tell: "A resposta evita o sim ou não." },
+      { id: "q3", q: "Você tinha algum problema com Elias?", a: "Só problemas de trabalho. Nada pessoal.", tell: "Ele olha para as prateleiras." },
+      { id: "q1a", q: "Alguém viu você na cozinha?", requiresQuestions: ["q1"], a: "Não sei. Com aquela tempestade, todo mundo estava ocupado.", tell: "O álibi fica frágil." },
+      { id: "q2a", q: "O que significa 'nada importante'?", requiresQuestions: ["q2"], a: "Eu saí por alguns minutos. Não queria que descobrissem o que eu estava escondendo.", gives: "tobias_garrafas" },
+      { id: "q3a", q: "Você estava escondendo algo de Elias?", requiresQuestions: ["q3"], a: "Garrafas. Eu desviava bebida. Era isso.", gives: "tobias_garrafas" },
+      { id: "q2b", q: "Então você saiu para preparar o assassinato?", requiresQuestions: ["q2a"], a: "Não. Saí para esconder bebida. Se você já decidiu que sou assassino, não importa o que eu diga.", tell: "Uma hipótese conveniente pode contaminar todo o restante do depoimento." }
+    
+],
   },
   {
     id: "helena",
@@ -330,10 +351,15 @@ export const SUSPECTS: Suspect[] = [
       { requires: "posicao", label: "Avaliação", text: "Confirma que nenhum navio poderia ter se aproximado." },
     ],
     questions: [
-      { id: "q1", q: "Onde estávamos durante o temporal?", a: "No canal norte, como previsto. Mantive o curso.", tell: "Controlada. Olha direto nos olhos.", aside: { who: "adrian", line: "Os cálculos na mesa dizem outra coisa." } },
-      { id: "q2", q: "Pressionar sobre a rota alterada", asker: "adrian", requiresQuestions: ["q1"], a: "Eu desviei. Três milhas. Não registrei porque ninguém precisava saber exatamente onde estávamos.", tell: "Pausa longa antes de responder.", aside: { who: "samuel", line: "Ela esconde um destino, não um crime." }, requires: ["rota"] },
-      { id: "q3", q: "Outro navio poderia ter nos alcançado?", requiresQuestions: ["q1"], a: "Com aquele vento? Nem eu conseguiria. Quem falou em ataque não olhou uma carta na vida.", requires: ["posicao"] },
-    ],
+      { id: "q1", q: "Onde você estava durante o temporal?", a: "Na sala de navegação.", tell: "Ela responde com segurança." },
+      { id: "q2", q: "Você alterou a rota?", a: "Fiz uma correção pequena.", tell: "Ela minimiza a alteração." },
+      { id: "q3", q: "Você poderia ter trazido outro navio até nós?", a: "Não. Aquelas águas não permitiam isso.", tell: "A pergunta parece importante, mas parte de uma hipótese externa.", gives: "posicao" },
+      { id: "q1a", q: "Alguém confirma que você ficou na navegação?", requiresQuestions: ["q1"], a: "O diário deveria confirmar. Se não confirma, o problema está no diário.", tell: "Ela desloca a questão para os registros." },
+      { id: "q2a", q: "Por que escondeu a alteração da rota?", requiresQuestions: ["q2"], a: "Porque não queria que Elias soubesse exatamente onde eu estava levando o navio.", gives: "rota" },
+      { id: "q3a", q: "Então o ataque só poderia ter vindo de dentro.", requiresQuestions: ["q3"], a: "Agora você está fazendo uma conclusão. Eu só respondi sobre a navegação.", tell: "A hipótese parece lógica, mas ainda não identifica ninguém." },
+      { id: "q3b", q: "Você está dizendo que alguém de dentro atacou Elias?", requiresQuestions: ["q3a"], a: "Estou dizendo que um navio externo era praticamente impossível.", tell: "O interrogatório começa a transformar uma impossibilidade em uma acusação." }
+    
+],
   },
   {
     id: "miriam",
@@ -350,9 +376,15 @@ export const SUSPECTS: Suspect[] = [
       { requires: "registro_alterado", label: "Observações", text: "Alguém raspou uma linha de seus livros." },
     ],
     questions: [
-      { id: "q1", q: "Quem entrou na cabine naquele dia?", a: "Marcus, de manhã. E o aprendiz, às cinco da tarde. O capitão pediu para eu não anotar o nome dele.", tell: "Responde como quem lê uma lista. Controlada.", gives: "daniel_chamado" },
-      { id: "q2", q: "Alguém mexeu nos seus livros?", requiresQuestions: ["q1"], a: "Alguém raspou uma linha de turno. Eu não escrevo com raspadeira.", tell: "Pela primeira vez, irritada.", requires: ["registro_alterado"] },
-    ],
+      { id: "q1", q: "O que você registra neste navio?", a: "Turnos, chaves, entradas e movimentações. Tudo que precisa ser rastreado.", gives: "registros" },
+      { id: "q2", q: "Quem teve acesso aos registros naquela tarde?", a: "Muita gente. É uma sala de serviço.", tell: "A resposta não exclui ninguém." },
+      { id: "q3", q: "Você poderia alterar um registro sem que ninguém percebesse?", a: "Eu poderia. Mas isso não significa que fiz.", tell: "A pergunta coloca Miriam no centro sem evidência." },
+      { id: "q1a", q: "O que os números no papel de Elias significam?", requiresQuestions: ["q1"], a: "São referências às minhas linhas de registro.", gives: "sequencia", requires: ["papel"] },
+      { id: "q2a", q: "Quem você viu perto dos livros?", requiresQuestions: ["q2"], a: "Não lembro de todos. O movimento foi grande.", tell: "Memória incompleta não é confissão." },
+      { id: "q3a", q: "Então você poderia ter apagado a linha das 17:42.", requiresQuestions: ["q3"], a: "Poderia. E qualquer pessoa com uma raspadeira também.", gives: "registro_alterado", requires: ["registro_alterado"] },
+      { id: "q3b", q: "Você está tentando proteger alguém?", requiresQuestions: ["q3a"], a: "Estou tentando proteger a integridade dos registros. Isso é diferente.", tell: "O caminho da suspeita contra Miriam não encontra um motivo concreto." }
+    
+],
   },
   {
     id: "daniel",
@@ -371,11 +403,16 @@ export const SUSPECTS: Suspect[] = [
       { requires: "daniel_identidade", label: "Identidade", text: "Nome falso. O infiltrado." },
     ],
     questions: [
-      { id: "q1", q: "O capitão falou com você ontem?", a: "Falou. Perguntou da minha viagem anterior. Só isso. Saí e voltei ao trabalho.", tell: "Resposta pronta demais." },
-      { id: "q2", q: "O que você sabe sobre a cabine?", requiresQuestions: ["q1"], a: "Nada. Só que estava escuro lá dentro... a vela estava apagada.", tell: "Desviou o olhar ao terminar a frase.", aside: { who: "samuel", line: "Como ele sabe disso? Ninguém descreveu a vela a ninguém." }, gives: "daniel_vela", requires: ["vela"] },
-      { id: "q3", q: "Quem lhe contou da vela?", asker: "samuel", requiresQuestions: ["q2"], a: "Eu... ouvi alguém comentar. Não lembro quem.", tell: "As mãos param de se mexer. Nervoso.", aside: { who: "adrian", line: "Ele também sabe horários de turno que ninguém ensinou a ele." }, gives: "daniel_rotinas", requires: ["daniel_vela"] },
-      { id: "q4", q: "Confrontar com a sequência de Elias e o registro raspado", requiresQuestions: ["q3"], a: "(longo silêncio) Ele já sabia. Ia me expor naquela noite. Eu não embarquei para matar ninguém.", tell: "Pela primeira vez, a voz não é a de um aprendiz.", aside: { who: "samuel", line: "A verdade não estava escondida. Estava espalhada." }, gives: "daniel_identidade", requires: ["sequencia", "registro_alterado", "daniel_rotinas"] },
-    ],
+      { id: "q1", q: "O capitão falou com você antes da morte?", a: "Falou. Perguntou sobre minha viagem anterior.", gives: "daniel_chamado" },
+      { id: "q2", q: "Onde você estava quando o temporal piorou?", a: "No convés, ajudando com as cordas.", tell: "Resposta simples, talvez simples demais." },
+      { id: "q3", q: "Você estava com Elias quando ele foi atacado?", a: "Não. Eu não estava na cabine.", tell: "A pergunta já presume uma proximidade que ainda não foi provada." },
+      { id: "q1a", q: "Sobre o que Elias queria falar?", requiresQuestions: ["q1"], a: "Sobre minha vida antes do navio. Nada importante.", tell: "Ele encerra o assunto rápido." },
+      { id: "q2a", q: "Alguém viu você no convés?", requiresQuestions: ["q2"], a: "Não sei. Estava escuro e todo mundo se movia.", tell: "O álibi depende de uma noite impossível de observar." },
+      { id: "q3a", q: "Então você admite que esteve perto da cabine?", requiresQuestions: ["q3"], a: "Não. Eu disse exatamente o contrário.", tell: "A pergunta tenta transformar uma negativa em admissão." },
+      { id: "q3b", q: "Você conhece a vela da cabine?", requiresQuestions: ["q3a"], a: "Só sei que havia uma vela lá. Todo mundo sabe disso.", tell: "Uma resposta aparentemente banal cria uma inconsistência quando comparada ao local do crime.", gives: "daniel_vela", requires: ["vela"] },
+      { id: "q1b", q: "O que você sabe sobre os horários de troca de turno?", requiresQuestions: ["q1"], a: "Aprendi observando os outros.", gives: "daniel_rotinas" }
+    
+],
   },
 ];
 
