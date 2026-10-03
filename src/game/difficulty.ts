@@ -70,7 +70,7 @@ export function shouldShowInvestigationSpot(
   if (difficulty === "facil") return true;
 
   const mediumHidden = new Set([
-    "lampiao", "mar", "escotilha", "fogao", "raspadeira", "rede", "janela", "cama", "corpo", "porta", "costado", "mapa", "caixas", "mesa",
+    "lampiao", "mar", "escotilha", "fogao", "raspadeira", "rede", "janela", "cama", "corpo", "porta", "costado", "mapa", "caixas",
   ]);
 
   const hardHidden = new Set([
