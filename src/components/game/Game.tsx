@@ -513,12 +513,7 @@ function SuspectView({
       </button>
       <div className="panel mt-3 p-6">
         <div className="flex items-center gap-4">
-          <div className="text-display flex h-14 w-14 items-center justify-center rounded-full border border-primary/50 text-xl text-primary">
-            {suspect.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-          </div>
+          <img src={suspect.portrait} alt={suspect.name} className="h-20 w-20 rounded-sm border border-primary/40 object-cover" />
           <div>
             <h2 className="text-2xl leading-tight">{suspect.name}</h2>
             <p className="text-xs uppercase tracking-wider text-primary">{suspect.role}</p>
