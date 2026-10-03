@@ -493,7 +493,8 @@ function SuspectView({
   const availableQuestions = suspect.questions.filter((q) => {
     const clueReady = game.hasAll(q.requires);
     const questionReady = (q.requiresQuestions ?? []).every((id) => askedHere.includes(id));
-    return clueReady && questionReady && !askedHere.includes(q.id);
+    const specialtyReady = !q.specialty || q.specialty === game.state.character?.specialty;
+    return clueReady && questionReady && specialtyReady && !askedHere.includes(q.id);
   });
 
   const hasLockedQuestions = suspect.questions.some((q) => {
@@ -526,7 +527,7 @@ function SuspectView({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Sala de interrogatório · {scene?.name ?? "A bordo"}</p>
-                <p className="mt-1 text-xs text-white/60">A pessoa está diante de você. Observe antes de perguntar.</p>
+                <p className="mt-1 text-xs text-white/60">{game.state.character?.specialty === "Persuasão" ? "Você percebe hesitações e pode pressionar contradições." : "Você observa detalhes que podem abrir caminhos que outros não percebem."}</p>
               </div>
               <span className="rounded-sm border border-white/20 bg-black/40 px-3 py-1 text-[10px] uppercase tracking-wider text-white/70">
                 {log.length} perguntas feitas
