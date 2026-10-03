@@ -486,7 +486,7 @@ function LocationView({
           {visibleSpots.map((spot) => {
             const isDone = !!spot.gives && game.has(spot.gives);
             const isLocked = !game.hasAll(spot.requires);
-            const radius = spot.radius ?? 9;
+            const radius = spot.radius ?? 5;
             return (
               <button
                 key={spot.id}
