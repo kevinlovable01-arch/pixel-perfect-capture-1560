@@ -527,11 +527,13 @@ function Case02DebateCharacters({ speaker }: { speaker: "Adrian Vale" | "Samuel 
 }
 
 function Case02DebateTurn({
+  scene,
   speaker,
   line,
   options,
   onChoose,
 }: {
+  scene: (typeof LOCATIONS)[number];
   speaker: string;
   line: string;
   options: Array<{ label: string; correct: boolean }>;
@@ -540,21 +542,28 @@ function Case02DebateTurn({
   return (
     <div className="relative min-h-[680px] overflow-hidden rounded-sm border border-primary/30 bg-black" style={{ animation: "veilFadeCase2 .45s ease-out both" }}>
       <style>{`@keyframes veilFadeCase2 { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      <img src={LOCATIONS.find((l) => l.id === "c2_conves")?.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/60 to-background" />
-      <div className="relative flex min-h-[680px] flex-col justify-end p-5 sm:p-8">
-        <div className="mx-auto w-full max-w-3xl">
-          <div className="mb-5 flex items-end justify-center gap-3">
-            <div className="h-24 w-20 rounded-t-full border border-primary/30 bg-black/55 p-2 text-center text-primary"><div className="flex h-12 items-center justify-center rounded-full border border-primary/40 text-xs">AV</div><div className="mx-auto mt-2 h-5 w-12 rounded-t-full bg-black/80" /></div>
-            <div className="h-10 w-44 rounded-[50%] border border-primary/30 bg-black/60" />
-            <div className="h-24 w-20 rounded-t-full border border-primary/30 bg-black/55 p-2 text-center text-primary"><div className="flex h-12 items-center justify-center rounded-full border border-primary/40 text-xs">SC</div><div className="mx-auto mt-2 h-5 w-12 rounded-t-full bg-black/80" /></div>
-          </div>
-          <div className="rounded-sm border border-white/15 bg-black/70 p-5 backdrop-blur-sm">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-primary">{speaker}</p>
+      <img src={scene.image} alt={scene.name} className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/40 to-background/95" />
+      <div className="relative flex min-h-[680px] flex-col justify-end p-4 sm:p-8">
+        <div className="mx-auto w-full max-w-4xl">
+          <Case02DebateCharacters speaker={speaker as "Adrian Vale" | "Samuel Crowe" | null} />
+          <div className="relative z-10 mt-[-22px] rounded-sm border border-white/15 bg-black/80 p-5 shadow-2xl backdrop-blur-md">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-primary">{speaker}</p>
+              <p className="text-[9px] uppercase tracking-[0.18em] text-white/35">{scene.name}</p>
+            </div>
             <p className="mt-2 text-sm leading-relaxed text-white/90">"{line}"</p>
-          </div>
-          <div className="mt-3 grid gap-2">
-            {options.map((option) => <button key={option.label} onClick={() => onChoose(option.correct)} className="rounded-sm border border-white/15 bg-black/65 px-4 py-3 text-left text-sm text-white hover:border-primary hover:bg-primary/10">{option.label}</button>)}
+            <div className="mt-4 grid gap-2">
+              {options.map((option) => (
+                <button
+                  key={option.label}
+                  onClick={() => onChoose(option.correct)}
+                  className="rounded-sm border border-white/15 bg-black/65 px-4 py-3 text-left text-sm text-white transition-all hover:border-primary hover:bg-primary/10"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
