@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep player identity in the versioned local game state so characterization and case progress resume together.
+- Keep the Case 02 visual world in a browser-safe asset catalog and a separate preliminary dossier route until the new investigation is implemented; browsing the dossier must not reset saved Case 01 progress.

@@ -132,3 +132,11 @@
     linear-gradient(color-mix(in oklab, var(--primary) 5%, transparent) 1px, transparent 1px);
   background-size: 48px 48px;
 }
+
+:root {
+  --nirmala-cover-shade: linear-gradient(180deg, transparent 20%, color-mix(in oklab, var(--background) 35%, transparent) 50%, color-mix(in oklab, var(--background) 94%, transparent) 100%);
+}
+
+@utility nirmala-cover-shade {
+  background: var(--nirmala-cover-shade);
+}

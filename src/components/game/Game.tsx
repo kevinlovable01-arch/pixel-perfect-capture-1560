@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   CASE,
   CLUES,
@@ -21,6 +22,7 @@ import coverAsset from "@/assets/veiloris-cover.png.asset.json";
 import samuelFullBody from "@/assets/samuel-crowe-fullbody.webp";
 import adrianFullBody from "@/assets/adrian-vale-fullbody.webp";
 import case01ConclusionScene from "@/assets/case01-conclusion-scene.svg";
+import nirmalaEstate from "@/assets/nirmala-estate.jpg";
 
 type Tab = "investigar" | "interrogar" | "caderno" | "linha" | "concluir";
 
@@ -136,12 +138,17 @@ function CaseSelection({ hasSave, onBack, onCase1, onCase2, onResume }: { hasSav
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{CASE.premise}</p>
             <span className="mt-6 inline-block text-xs uppercase tracking-wider text-primary">Abrir arquivo →</span>
           </button>
-          <button onClick={onCase2} className="panel group p-6 text-left transition-all hover:border-primary">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-primary">CASO 02</p>
-            <h2 className="mt-2 text-2xl">A Última Fotografia</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Uma fotografia desaparece durante uma recepção privada. Um colecionador é encontrado inconsciente. O que parece um roubo pode esconder outra história.</p>
-            <span className="mt-6 inline-block text-xs uppercase tracking-wider text-primary">Abrir arquivo →</span>
-          </button>
+          <Button asChild variant="ghost" className="group h-auto flex-col items-stretch justify-start gap-0 overflow-hidden whitespace-normal rounded-sm border border-border p-0 text-left hover:border-primary">
+            <Link to="/caso-02">
+              <img src={nirmalaEstate} alt="Plantação Nirmala, no interior de Java" loading="lazy" width={1536} height={1024} className="aspect-[3/2] w-full object-cover" />
+              <div className="p-6">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-primary">CASO 02 · Arquivo preliminar</p>
+                <h2 className="mt-2 text-2xl">As Cinzas de Nirmala</h2>
+                <p className="mt-3 text-sm font-normal leading-relaxed text-muted-foreground">Uma fazenda de especiarias no interior da Indonésia. Uma porta trancada por dentro. E uma noite que cada pessoa conta de um jeito.</p>
+                <span className="mt-6 inline-block text-xs uppercase text-primary">Conhecer Nirmala →</span>
+              </div>
+            </Link>
+          </Button>
         </div>
         {hasSave && <div className="panel mt-6 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm">Existe uma investigação em andamento.</p><p className="mt-1 text-xs text-muted-foreground">Você pode continuar exatamente de onde parou.</p></div><Button variant="outline" onClick={onResume}>Continuar investigação</Button></div>}
       </div>
